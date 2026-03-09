@@ -61,6 +61,7 @@ brew "zeromq"         # Messaging library (used by Jupyter kernel communication)
 # Automation & Services
 # -----------------------------------------------------------------------------
 brew "jackett"        # API support for torrent trackers
+brew "terminal-notifier"  # macOS notifications from scripts (used by launchd audit job)
 
 # -----------------------------------------------------------------------------
 # Fonts
