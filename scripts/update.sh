@@ -9,12 +9,10 @@ echo "==> Updating development environment..."
 echo "--> Updating Homebrew packages..."
 brew update && brew upgrade && brew cleanup
 
-# fnm self-update + global Node packages
+# Global Node packages
 if command -v fnm &>/dev/null; then
-  echo "--> Updating fnm..."
-  curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir "$HOME/.local/bin" --skip-shell
-  eval "$(fnm env)"
   echo "--> Updating global Node packages..."
+  eval "$(fnm env)"
   bash "$DOTFILES_DIR/lang/node-globals.sh"
 fi
 
