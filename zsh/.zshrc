@@ -31,10 +31,6 @@ eval "$(pyenv init - zsh)"
 # rbenv (Ruby)
 eval "$(rbenv init - zsh)"
 
-# SDKMAN (Java) — must be at end of file
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-
 # =============================================================================
 # Dotfiles install tracking wrappers
 # Auto-appends to tracking files when you install packages.
@@ -122,3 +118,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # iTerm2 shell integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+# SDKMAN (Java) — must be at end of file
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"

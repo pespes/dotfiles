@@ -2,8 +2,8 @@
 # Rust components and cargo installs — run by make install and make update
 
 rustup component add \
-  clippy \
-  rustfmt
+  clippy  \  # Rust linter
+  rustfmt    # Rust code formatter
 
 # cargo installs (add packages here as you install them globally)
 # cargo install cargo-watch
