@@ -5,7 +5,7 @@ DOTFILES_DIR="$HOME/dotfiles"
 AUDIT_OUTPUT=$(bash "$DOTFILES_DIR/scripts/audit.sh" 2>&1)
 
 # Notify if anything needs attention
-if echo "$AUDIT_OUTPUT" | grep -qE "Would uninstall|Not tracked|!"; then
+if echo "$AUDIT_OUTPUT" | grep -qE "Would uninstall|Not tracked:|!.*symlink"; then
   terminal-notifier \
     -title "dotfiles audit" \
     -message "Environment drift detected. Run 'make audit' to review." \
