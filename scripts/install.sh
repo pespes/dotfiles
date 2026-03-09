@@ -17,10 +17,16 @@ brew bundle --file="$DOTFILES_DIR/homebrew/Brewfile"
 
 # 2. fnm (Node)
 if confirm "--> Set up Node via fnm?"; then
-  if ! command -v fnm &>/dev/null; then brew install fnm; fi
+  if ! command -v fnm &>/dev/null; then
+    echo "    Installing fnm via bash..."
+    curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir "$HOME/.local/bin" --skip-shell
+    export PATH="$HOME/.local/bin:$PATH"
+  fi
   eval "$(fnm env)"
   fnm install --lts
   fnm use lts-latest
+  echo "    Enabling pnpm via corepack..."
+  corepack enable pnpm
   echo "    Installing global Node packages..."
   bash "$DOTFILES_DIR/lang/node-globals.sh"
 fi

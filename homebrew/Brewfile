@@ -25,8 +25,6 @@ brew "gnupg"          # GPG — git commit signing (see README for setup)
 # -----------------------------------------------------------------------------
 # Language Version Managers
 # -----------------------------------------------------------------------------
-brew "fnm"            # Fast Node Manager (Node.js)
-brew "pnpm"           # Fast, disk-efficient Node package manager
 brew "pyenv"          # Python version manager
 brew "pyenv-virtualenv" # pyenv plugin: manage virtualenvs
 brew "rbenv"          # Ruby version manager
