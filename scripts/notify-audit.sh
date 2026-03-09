@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Run by launchd weekly — checks for environment drift and notifies if found
 
-DOTFILES_DIR="$HOME/dotfiles"
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 AUDIT_OUTPUT=$(bash "$DOTFILES_DIR/scripts/audit.sh" 2>&1)
 
 # Notify if anything needs attention

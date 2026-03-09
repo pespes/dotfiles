@@ -30,10 +30,15 @@ if confirm "--> Set up Ruby via rbenv?"; then
   if ! command -v rbenv &>/dev/null; then brew install rbenv ruby-build; fi
   eval "$(rbenv init -)"
   RUBY_VERSION=$(grep '^ruby' "$DOTFILES_DIR/lang/.tool-versions" | awk '{print $2}')
-  rbenv install -s "$RUBY_VERSION"
-  rbenv global "$RUBY_VERSION"
-  echo "    Installing global gems..."
-  bash "$DOTFILES_DIR/lang/ruby-globals.sh"
+  if [[ "$RUBY_VERSION" == "not-managed-by-rbenv" || "$RUBY_VERSION" == "unknown" || -z "$RUBY_VERSION" ]]; then
+    echo "    No Ruby version pinned in lang/.tool-versions — skipping rbenv install."
+    echo "    Edit lang/.tool-versions to set a version, then re-run."
+  else
+    rbenv install -s "$RUBY_VERSION"
+    rbenv global "$RUBY_VERSION"
+    echo "    Installing global gems..."
+    bash "$DOTFILES_DIR/lang/ruby-globals.sh"
+  fi
 fi
 
 # 4. pyenv (Python)
@@ -41,10 +46,15 @@ if confirm "--> Set up Python via pyenv?"; then
   if ! command -v pyenv &>/dev/null; then brew install pyenv; fi
   eval "$(pyenv init -)"
   PYTHON_VERSION=$(grep '^python' "$DOTFILES_DIR/lang/.tool-versions" | awk '{print $2}')
-  pyenv install -s "$PYTHON_VERSION"
-  pyenv global "$PYTHON_VERSION"
-  echo "    Installing global pip packages..."
-  bash "$DOTFILES_DIR/lang/python-globals.sh"
+  if [[ "$PYTHON_VERSION" == "unknown" || -z "$PYTHON_VERSION" ]]; then
+    echo "    No Python version pinned in lang/.tool-versions — skipping pyenv install."
+    echo "    Edit lang/.tool-versions to set a version, then re-run."
+  else
+    pyenv install -s "$PYTHON_VERSION"
+    pyenv global "$PYTHON_VERSION"
+    echo "    Installing global pip packages..."
+    bash "$DOTFILES_DIR/lang/python-globals.sh"
+  fi
 fi
 
 # 5. rustup (Rust)

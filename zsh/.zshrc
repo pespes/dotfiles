@@ -5,7 +5,7 @@
 export ZSH="$HOME/.oh-my-zsh"
 
 # Load spaceship theme
-source "/opt/homebrew/opt/spaceship/spaceship.zsh"
+[[ -f /opt/homebrew/opt/spaceship/spaceship.zsh ]] && source "/opt/homebrew/opt/spaceship/spaceship.zsh"
 
 # Which plugins would you like to load?
 plugins=(brew git zsh-autosuggestions zsh-syntax-highlighting)
