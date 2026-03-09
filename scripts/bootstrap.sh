@@ -18,8 +18,12 @@ fi
 if ! command -v brew &>/dev/null; then
   echo "--> Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  # Add brew to PATH for Apple Silicon
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+  # Add brew to PATH — handles both Apple Silicon (/opt/homebrew) and Intel (/usr/local)
+  if [ -f /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [ -f /usr/local/bin/brew ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
 else
   echo "--> Homebrew already installed. Skipping."
 fi

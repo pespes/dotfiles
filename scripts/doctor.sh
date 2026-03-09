@@ -46,7 +46,7 @@ echo ""
 echo "--- Dotfile Symlinks ---"
 check "~/.zshrc is symlinked"      "[ -L \"$HOME/.zshrc\" ]"
 check "~/.gitconfig is symlinked"  "[ -L \"$HOME/.gitconfig\" ]"
-warn  "~/.ssh/config exists"       "[ -f \"$HOME/.ssh/config\" ]"
+warn  "~/.ssh/config is symlinked" "[ -L \"$HOME/.ssh/config\" ]"
 
 echo ""
 echo "--- SSH & GPG ---"

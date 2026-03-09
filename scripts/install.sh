@@ -64,6 +64,10 @@ if confirm "--> Set up Java via SDKMAN?"; then
   # shellcheck source=/dev/null
   source "$HOME/.sdkman/bin/sdkman-init.sh"
   sdk install java
+  if [ -f "$DOTFILES_DIR/lang/java-globals.sh" ]; then
+    echo "    Installing global Java tools..."
+    bash "$DOTFILES_DIR/lang/java-globals.sh"
+  fi
 fi
 
 echo "==> Install complete."
