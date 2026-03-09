@@ -49,7 +49,7 @@ echo ""
 # VS Code extension drift
 if command -v code &>/dev/null && [ -f "$DOTFILES_DIR/editors/vscode-extensions.sh" ]; then
   echo "--- VS Code extensions installed but NOT in vscode-extensions.sh ---"
-  tracked_vscode=$(grep -oE '[a-z0-9_-]+\.[a-z0-9_-]+' "$DOTFILES_DIR/editors/vscode-extensions.sh" | sort)
+  tracked_vscode=$(grep -- '--install-extension' "$DOTFILES_DIR/editors/vscode-extensions.sh" | sed 's/.*--install-extension[[:space:]]*//' | sed 's/[[:space:]].*//' | sort)
   installed_vscode=$(code --list-extensions 2>/dev/null | sort)
   untracked_vscode=$(comm -13 <(echo "$tracked_vscode") <(echo "$installed_vscode") 2>/dev/null || true)
   if [ -n "$untracked_vscode" ]; then
@@ -74,7 +74,7 @@ fi
 CURSOR=/Applications/Cursor.app/Contents/Resources/app/bin/cursor
 if [ -f "$CURSOR" ] && [ -f "$DOTFILES_DIR/editors/cursor-extensions.sh" ]; then
   echo "--- Cursor extensions installed but NOT in cursor-extensions.sh ---"
-  tracked_cursor=$(grep -oE '[a-z0-9_-]+\.[a-z0-9_-]+' "$DOTFILES_DIR/editors/cursor-extensions.sh" | sort)
+  tracked_cursor=$(grep -- '--install-extension' "$DOTFILES_DIR/editors/cursor-extensions.sh" | sed 's/.*--install-extension[[:space:]]*//' | sed 's/[[:space:]].*//' | sort)
   installed_cursor=$("$CURSOR" --list-extensions 2>/dev/null | sort)
   untracked_cursor=$(comm -13 <(echo "$tracked_cursor") <(echo "$installed_cursor") 2>/dev/null || true)
   if [ -n "$untracked_cursor" ]; then
