@@ -176,7 +176,7 @@ git commit -m "feat: add repo scaffolding, README, and .gitignore"
 DOTFILES_DIR := $(shell pwd)
 STOW_PACKAGES := zsh git ssh lang
 
-.PHONY: help install link update backup doctor
+.PHONY: help install link update backup doctor audit
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -207,6 +207,10 @@ backup: ## Snapshot current Homebrew state
 doctor: ## Check for broken symlinks, missing tools, SSH/GPG config
 	@echo "==> Running doctor checks..."
 	@bash scripts/doctor.sh
+
+audit: ## Show drift: what's installed but not tracked, and vice versa
+	@echo "==> Auditing environment drift..."
+	@bash scripts/audit.sh
 ```
 
 **Step 2: Verify Makefile parses correctly**
@@ -1083,12 +1087,148 @@ git push
 
 ---
 
+## Task 15: audit.sh (Drift Detection)
+
+**Files:**
+- Create: `scripts/audit.sh`
+
+This is the key tool for keeping the repo up to date over time. It answers: "What have I installed or changed that isn't tracked yet?"
+
+**Step 1: Write audit.sh**
+
+```bash
+cat > /Users/peteresveld/Documents/GitHub/dotfiles/scripts/audit.sh << 'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+WARN="\033[33m!\033[0m"
+INFO="\033[34m→\033[0m"
+
+echo "==> Audit: checking for environment drift"
+echo ""
+
+# 1. Homebrew: installed but not in Brewfile
+echo "--- Brew packages installed but NOT in Brewfile ---"
+echo "    (run: brew bundle cleanup --dry-run to see what would be removed)"
+brew bundle cleanup --file="$DOTFILES_DIR/homebrew/Brewfile" --dry-run 2>/dev/null || true
+echo ""
+
+# 2. Homebrew: in Brewfile but not installed
+echo "--- Brew packages in Brewfile but NOT installed ---"
+brew bundle check --file="$DOTFILES_DIR/homebrew/Brewfile" 2>&1 | grep -v "satisfied" || echo "    All Brewfile packages are installed."
+echo ""
+
+# 3. Global Node packages not in node-globals.sh
+if command -v npm &>/dev/null; then
+  echo "--- Global npm packages not tracked in node-globals.sh ---"
+  tracked=$(grep -oE "'[^']+'" "$DOTFILES_DIR/lang/node-globals.sh" | tr -d "'" | sort)
+  installed=$(npm list -g --depth=0 --parseable 2>/dev/null | tail -n +2 | xargs -I{} basename {} | sort)
+  diff <(echo "$tracked") <(echo "$installed") | grep '^>' | sed 's/^> /    ! Not tracked: /' || echo "    All global npm packages are tracked."
+  echo ""
+fi
+
+# 4. Global pip packages not in python-globals.sh
+if command -v pip &>/dev/null; then
+  echo "--- Global pip packages not tracked in python-globals.sh ---"
+  tracked=$(grep -v '^#' "$DOTFILES_DIR/lang/python-globals.sh" | grep -oE '\S+$' | grep -v 'pip\|install\|upgrade' | sort)
+  installed=$(pip list --format=columns 2>/dev/null | tail -n +3 | awk '{print tolower($1)}' | sort)
+  diff <(echo "$tracked") <(echo "$installed") | grep '^>' | sed 's/^> /    ! Not tracked: /' || echo "    (manual check recommended)"
+  echo ""
+fi
+
+# 5. Broken symlinks in ~
+echo "--- Broken symlinks in ~ ---"
+broken=$(find "$HOME" -maxdepth 1 -type l ! -exec test -e {} \; -print 2>/dev/null)
+if [ -z "$broken" ]; then
+  echo "    None found."
+else
+  echo "$broken" | sed 's/^/    ! /'
+fi
+echo ""
+
+echo "==> Audit complete. Review output above and update dotfiles accordingly."
+echo "    To add an untracked brew package: edit homebrew/Brewfile, then git commit."
+echo "    To add an untracked global package: edit lang/*-globals.sh, then git commit."
+EOF
+chmod +x /Users/peteresveld/Documents/GitHub/dotfiles/scripts/audit.sh
+```
+
+**Step 2: Verify syntax**
+
+```bash
+bash -n /Users/peteresveld/Documents/GitHub/dotfiles/scripts/audit.sh
+```
+
+**Step 3: Run it to check current state**
+
+```bash
+cd /Users/peteresveld/Documents/GitHub/dotfiles && make audit
+# Expected: a list of untracked packages — this is your to-do list for Task 4 (Brewfile)
+```
+
+**Step 4: Commit**
+
+```bash
+git add scripts/audit.sh
+git commit -m "feat: add audit.sh for drift detection between installed and tracked packages"
+```
+
+---
+
 ## Ongoing Maintenance
 
 | When | Command |
 |---|---|
 | Daily/weekly | `make update` |
+| After installing anything | `make audit` — see what's not tracked yet |
 | After adding a dotfile | `make link && git commit` |
-| After installing a brew package | Edit Brewfile + `git commit` |
+| After installing a brew package | Edit `homebrew/Brewfile` with a comment + `git commit` |
+| After `npm install -g foo` | Add to `lang/node-globals.sh` + `git commit` |
+| After `pip install foo` | Add to `lang/python-globals.sh` + `git commit` |
+| After `cargo install foo` | Add to `lang/rust-globals.sh` + `git commit` |
 | Something feels broken | `make doctor` |
 | Before major changes | `make backup` |
+
+### Bumping a Language Version
+
+When you want to intentionally upgrade a runtime (e.g., Node 20 → 22):
+
+```bash
+# 1. Update the version pin
+edit lang/.tool-versions   # change the version number
+
+# 2. Install the new version
+fnm install 22             # (or rbenv install X.X.X, pyenv install X.X.X)
+fnm default 22
+
+# 3. Re-run globals to install them against the new version
+bash lang/node-globals.sh
+
+# 4. Commit the version bump
+git add lang/.tool-versions
+git commit -m "chore: bump Node to 22"
+```
+
+### Adding a New Topic Package
+
+When you want to track a new tool's config (e.g., `editors/`):
+
+```bash
+# 1. Create the package directory mirroring ~
+mkdir -p dotfiles/editors/.config/some-editor/
+
+# 2. Move the config in
+mv ~/.config/some-editor/config dotfiles/editors/.config/some-editor/config
+
+# 3. Link it
+make link
+
+# 4. Commit
+git add editors/
+git commit -m "feat: add editors topic package"
+```
+
+### The Rule
+
+**If you installed it or configured it, it belongs in the repo.** Run `make audit` whenever you're not sure what's drifted.
