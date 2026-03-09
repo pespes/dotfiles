@@ -11,6 +11,7 @@ tap "homebrew/cask-fonts"
 # -----------------------------------------------------------------------------
 # Shell & Terminal
 # -----------------------------------------------------------------------------
+brew "stow"           # Dotfile symlink manager — core tool for this repo
 brew "bash"           # Keep Bash current alongside zsh
 brew "coreutils"      # GNU core utilities (gls, gdate, etc.)
 brew "spaceship"      # Zsh prompt theme
@@ -54,7 +55,7 @@ brew "yt-dlp"         # Video downloader (YouTube, etc.)
 brew "cmake"          # Cross-platform build system
 brew "watchman"       # File watching service (used by React Native, etc.)
 brew "ios-deploy"     # Deploy to iOS devices from CLI
-brew "zeromq"         # Messaging library
+brew "zeromq"         # Messaging library (used by Jupyter kernel communication)
 
 # -----------------------------------------------------------------------------
 # Automation & Services
