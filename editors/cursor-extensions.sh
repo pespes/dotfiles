@@ -12,10 +12,9 @@ set -euo pipefail
 CURSOR=/Applications/Cursor.app/Contents/Resources/app/bin/cursor
 
 # -----------------------------------------------------------------------------
-# AI & IntelliSense
+# AI
 # -----------------------------------------------------------------------------
 "$CURSOR" --install-extension google.geminicodeassist                    # Gemini AI code assist
-"$CURSOR" --install-extension visualstudioexptteam.vscodeintellicode    # AI-assisted IntelliSense
 
 # -----------------------------------------------------------------------------
 # Git & Version Control

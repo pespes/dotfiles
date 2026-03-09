@@ -4,7 +4,7 @@
 # Or:  make editors
 #
 # Auto-installed dependencies are NOT listed (e.g. redhat.vscode-yaml auto-installs
-# with atlassian.atlascode, intellicode-api-usage-examples with vscodeintellicode).
+# with atlassian.atlascode).
 # VS Code-specific extensions (not in Cursor) are marked with [VS Code only].
 
 set -euo pipefail
@@ -12,10 +12,9 @@ set -euo pipefail
 code --install-extension anthropic.claude-code                          # Claude Code AI assistant [VS Code only]
 
 # -----------------------------------------------------------------------------
-# AI & IntelliSense
+# AI
 # -----------------------------------------------------------------------------
 code --install-extension google.geminicodeassist                        # Gemini AI code assist
-code --install-extension visualstudioexptteam.vscodeintellicode         # AI-assisted IntelliSense
 code --install-extension github.copilot-chat                            # GitHub Copilot AI chat [VS Code only]
 
 # -----------------------------------------------------------------------------

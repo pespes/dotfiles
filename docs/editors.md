@@ -96,5 +96,4 @@ make audit
 - `anthropic.claude-code` and `github.copilot-chat` are VS Code only — Cursor has built-in AI
 - `github.github-vscode-theme` is VS Code only — theme preference differs per editor
 - `redhat.vscode-yaml` is auto-installed by `atlassian.atlascode` — not tracked separately
-- `visualstudioexptteam.intellicode-api-usage-examples` is auto-installed by `vscodeintellicode` — not tracked separately
 - Python interpreter is managed by pyenv — no `python.defaultInterpreterPath` override needed in settings
