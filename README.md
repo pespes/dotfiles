@@ -2,12 +2,10 @@
 
 Personal macOS development environment — source of truth.
 
-> **Status:** Under active construction — structure and scripts are being built.
-
 ## Quick Start (Fresh Mac)
 
 ```bash
-git clone <your-repo-url> ~/dotfiles
+git clone git@github.com:pespes/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 make install
 ```
