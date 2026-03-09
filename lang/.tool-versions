@@ -1,0 +1,7 @@
+# Canonical language version pins
+# Human-readable record — each manager uses its own format natively
+node    v24.14.0
+ruby    not-managed-by-rbenv
+python  unknown
+rust    stable-aarch64-apple-darwin
+java    temurin-21  # SDKMAN — update after SDKMAN install
