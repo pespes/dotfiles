@@ -1232,3 +1232,231 @@ git commit -m "feat: add editors topic package"
 ### The Rule
 
 **If you installed it or configured it, it belongs in the repo.** Run `make audit` whenever you're not sure what's drifted.
+
+---
+
+## Task 16: Shell Install Wrappers
+
+**Files:**
+- Modify: `zsh/.zshrc` (add wrapper functions near the bottom, before SDKMAN init)
+
+These wrappers intercept install commands and auto-append to the tracking files, then remind you to add a comment and commit. They call the real command first, so behavior is unchanged.
+
+**Step 1: Add wrappers to .zshrc**
+
+```zsh
+# =============================================================================
+# Dotfiles install tracking wrappers
+# Auto-appends to tracking files when you install packages.
+# Uninstalls are NOT auto-removed (too risky) — run `make audit` to catch drift.
+# =============================================================================
+
+DOTFILES_DIR="$HOME/dotfiles"
+
+brew() {
+  command brew "$@"
+  if [[ "$1" == "install" && -n "$2" ]]; then
+    local pkg="$2"
+    local brewfile="$DOTFILES_DIR/homebrew/Brewfile"
+    if ! grep -q "\"$pkg\"" "$brewfile" 2>/dev/null; then
+      echo "brew \"$pkg\"  # added $(date +%Y-%m-%d) — add a comment explaining why" >> "$brewfile"
+      echo "dotfiles → Added '$pkg' to Brewfile. Edit the comment, then git commit."
+    fi
+  fi
+}
+
+npm() {
+  command npm "$@"
+  if [[ "$1" == "install" && "$2" == "-g" && -n "$3" ]]; then
+    local pkg="$3"
+    local globals="$DOTFILES_DIR/lang/node-globals.sh"
+    if ! grep -q "$pkg" "$globals" 2>/dev/null; then
+      echo "  $pkg \\" >> "$globals"
+      echo "dotfiles → Added '$pkg' to node-globals.sh. Commit when ready."
+    fi
+  fi
+}
+
+pip() {
+  command pip "$@"
+  if [[ "$1" == "install" && -n "$2" && "$2" != "--upgrade" ]]; then
+    local pkg="$2"
+    local globals="$DOTFILES_DIR/lang/python-globals.sh"
+    if ! grep -q "$pkg" "$globals" 2>/dev/null; then
+      echo "  $pkg \\" >> "$globals"
+      echo "dotfiles → Added '$pkg' to python-globals.sh. Commit when ready."
+    fi
+  fi
+}
+
+gem() {
+  command gem "$@"
+  if [[ "$1" == "install" && -n "$2" ]]; then
+    local pkg="$2"
+    local globals="$DOTFILES_DIR/lang/ruby-globals.sh"
+    if ! grep -q "$pkg" "$globals" 2>/dev/null; then
+      echo "  $pkg \\" >> "$globals"
+      echo "dotfiles → Added '$pkg' to ruby-globals.sh. Commit when ready."
+    fi
+  fi
+}
+
+cargo() {
+  command cargo "$@"
+  if [[ "$1" == "install" && -n "$2" ]]; then
+    local pkg="$2"
+    local globals="$DOTFILES_DIR/lang/rust-globals.sh"
+    if ! grep -q "$pkg" "$globals" 2>/dev/null; then
+      echo "cargo install $pkg" >> "$globals"
+      echo "dotfiles → Added '$pkg' to rust-globals.sh. Commit when ready."
+    fi
+  fi
+}
+```
+
+**Step 2: Verify wrappers don't break the real commands**
+
+```bash
+# Source updated zshrc
+source ~/.zshrc
+
+# Test brew wrapper (dry run — don't actually install)
+which brew     # should still resolve to /opt/homebrew/bin/brew
+brew --version # should work normally
+```
+
+**Step 3: Commit**
+
+```bash
+git add zsh/.zshrc
+git commit -m "feat: add shell install wrappers for auto-tracking to dotfiles"
+```
+
+---
+
+## Task 17: Weekly launchd Audit Job
+
+**Files:**
+- Create: `macos/Library/LaunchAgents/com.peteresveld.dotfiles-audit.plist`
+- Create: `scripts/notify-audit.sh`
+
+This runs `make audit` every Monday at 9am and fires a native macOS notification if drift is found, so you never have to remember to check.
+
+**Note:** The `macos/` directory is a new stow package for macOS-specific files that live deep in `~/Library/`. It is NOT linked to `~` with stow (the path is too deep and risky). Instead, `scripts/link.sh` gets a special case to install it manually.
+
+**Step 1: Install terminal-notifier via Brewfile**
+
+Add to `homebrew/Brewfile`:
+```ruby
+brew "terminal-notifier"  # macOS notifications from scripts
+```
+
+Then: `brew bundle --file=homebrew/Brewfile`
+
+**Step 2: Create notify-audit.sh**
+
+```bash
+cat > /Users/peteresveld/Documents/GitHub/dotfiles/scripts/notify-audit.sh << 'EOF'
+#!/usr/bin/env bash
+# Run by launchd — checks for drift and notifies if found
+
+DOTFILES_DIR="$HOME/dotfiles"
+AUDIT_OUTPUT=$(bash "$DOTFILES_DIR/scripts/audit.sh" 2>&1)
+
+# Check if anything needs attention (untracked packages or broken symlinks)
+if echo "$AUDIT_OUTPUT" | grep -qE "Would uninstall|Not tracked|Broken"; then
+  terminal-notifier \
+    -title "dotfiles audit" \
+    -message "Environment drift detected. Run 'make audit' to review." \
+    -sound default \
+    -group dotfiles-audit
+fi
+EOF
+chmod +x /Users/peteresveld/Documents/GitHub/dotfiles/scripts/notify-audit.sh
+```
+
+**Step 3: Create the launchd plist**
+
+```bash
+mkdir -p /Users/peteresveld/Documents/GitHub/dotfiles/macos/Library/LaunchAgents
+
+cat > /Users/peteresveld/Documents/GitHub/dotfiles/macos/Library/LaunchAgents/com.peteresveld.dotfiles-audit.plist << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.peteresveld.dotfiles-audit</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/peteresveld/dotfiles/scripts/notify-audit.sh</string>
+    </array>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>1</integer>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/dotfiles-audit.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/dotfiles-audit.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>
+EOF
+```
+
+**Step 4: Update link.sh to install the launchd plist**
+
+Add to the end of `scripts/link.sh`, before the final echo:
+
+```bash
+# Install launchd audit job (not handled by stow — path is too deep)
+PLIST_SRC="$DOTFILES_DIR/macos/Library/LaunchAgents/com.peteresveld.dotfiles-audit.plist"
+PLIST_DST="$HOME/Library/LaunchAgents/com.peteresveld.dotfiles-audit.plist"
+if [ -f "$PLIST_SRC" ]; then
+  cp "$PLIST_SRC" "$PLIST_DST"
+  launchctl unload "$PLIST_DST" 2>/dev/null || true
+  launchctl load "$PLIST_DST"
+  echo "--> launchd audit job installed (runs Mondays at 9am)."
+fi
+```
+
+**Step 5: Load the job now to verify it registers**
+
+```bash
+cp /Users/peteresveld/Documents/GitHub/dotfiles/macos/Library/LaunchAgents/com.peteresveld.dotfiles-audit.plist \
+   ~/Library/LaunchAgents/com.peteresveld.dotfiles-audit.plist
+
+launchctl load ~/Library/LaunchAgents/com.peteresveld.dotfiles-audit.plist
+
+# Verify it's registered
+launchctl list | grep dotfiles-audit
+# Expected: a row with com.peteresveld.dotfiles-audit
+```
+
+**Step 6: Test it fires correctly**
+
+```bash
+bash /Users/peteresveld/Documents/GitHub/dotfiles/scripts/notify-audit.sh
+# Expected: either silence (no drift) or a macOS notification appears
+```
+
+**Step 7: Commit**
+
+```bash
+git add macos/ scripts/notify-audit.sh scripts/link.sh homebrew/Brewfile
+git commit -m "feat: add weekly launchd audit job with macOS notifications"
+```
