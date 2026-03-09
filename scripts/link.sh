@@ -2,7 +2,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PACKAGES=(zsh git ssh lang)
+PACKAGES=(zsh git ssh lang gnupg)
 
 echo "==> Linking dotfiles via stow..."
 
