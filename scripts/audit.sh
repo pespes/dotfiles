@@ -46,6 +46,55 @@ else
 fi
 echo ""
 
+# VS Code extension drift
+if command -v code &>/dev/null && [ -f "$DOTFILES_DIR/editors/vscode-extensions.sh" ]; then
+  echo "--- VS Code extensions installed but NOT in vscode-extensions.sh ---"
+  tracked_vscode=$(grep -oE '[a-z0-9_-]+\.[a-z0-9_-]+' "$DOTFILES_DIR/editors/vscode-extensions.sh" | sort)
+  installed_vscode=$(code --list-extensions 2>/dev/null | sort)
+  untracked_vscode=$(comm -13 <(echo "$tracked_vscode") <(echo "$installed_vscode") 2>/dev/null || true)
+  if [ -n "$untracked_vscode" ]; then
+    echo "$untracked_vscode" | sed 's/^/    ! Not tracked: /'
+  else
+    echo "    All VS Code extensions are tracked."
+  fi
+  echo ""
+
+  echo "--- VS Code extensions in vscode-extensions.sh but NOT installed ---"
+  missing_vscode=$(comm -23 <(echo "$tracked_vscode") <(echo "$installed_vscode") 2>/dev/null || true)
+  if [ -n "$missing_vscode" ]; then
+    echo "$missing_vscode" | sed 's/^/    ! Not installed: /'
+    echo "    Run: make editors"
+  else
+    echo "    All tracked extensions are installed."
+  fi
+  echo ""
+fi
+
+# Cursor extension drift
+CURSOR=/Applications/Cursor.app/Contents/Resources/app/bin/cursor
+if [ -f "$CURSOR" ] && [ -f "$DOTFILES_DIR/editors/cursor-extensions.sh" ]; then
+  echo "--- Cursor extensions installed but NOT in cursor-extensions.sh ---"
+  tracked_cursor=$(grep -oE '[a-z0-9_-]+\.[a-z0-9_-]+' "$DOTFILES_DIR/editors/cursor-extensions.sh" | sort)
+  installed_cursor=$("$CURSOR" --list-extensions 2>/dev/null | sort)
+  untracked_cursor=$(comm -13 <(echo "$tracked_cursor") <(echo "$installed_cursor") 2>/dev/null || true)
+  if [ -n "$untracked_cursor" ]; then
+    echo "$untracked_cursor" | sed 's/^/    ! Not tracked: /'
+  else
+    echo "    All Cursor extensions are tracked."
+  fi
+  echo ""
+
+  echo "--- Cursor extensions in cursor-extensions.sh but NOT installed ---"
+  missing_cursor=$(comm -23 <(echo "$tracked_cursor") <(echo "$installed_cursor") 2>/dev/null || true)
+  if [ -n "$missing_cursor" ]; then
+    echo "$missing_cursor" | sed 's/^/    ! Not installed: /'
+    echo "    Run: make editors"
+  else
+    echo "    All tracked Cursor extensions are installed."
+  fi
+  echo ""
+fi
+
 echo "==> Audit complete."
 echo "    Untracked brew package: edit homebrew/Brewfile, then git commit."
 echo "    Untracked global package: edit lang/*-globals.sh, then git commit."
