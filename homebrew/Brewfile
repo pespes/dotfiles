@@ -17,11 +17,9 @@ brew "zsh-async"      # Async support for zsh plugins
 brew "rlwrap"         # Readline wrapper (used with Clojure REPL)
 
 # -----------------------------------------------------------------------------
-# Version Control & Security
+# Version Control
 # -----------------------------------------------------------------------------
 brew "gh"             # GitHub CLI
-brew "gnupg"          # GPG — git commit signing (see README for setup)
-brew "pinentry-mac"   # macOS native GPG passphrase dialog (required for gpg-agent)
 
 # -----------------------------------------------------------------------------
 # Language Version Managers

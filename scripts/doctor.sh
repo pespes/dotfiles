@@ -49,10 +49,8 @@ check "~/.gitconfig is symlinked"  "[ -L \"$HOME/.gitconfig\" ]"
 warn  "~/.ssh/config is symlinked" "[ -L \"$HOME/.ssh/config\" ]"
 
 echo ""
-echo "--- SSH & GPG ---"
+echo "--- SSH ---"
 warn  "SSH key exists"           "ls \"$HOME\"/.ssh/id_*.pub 2>/dev/null | head -1 | grep -q ."
-warn  "GPG key configured"       "git config --global user.signingkey 2>/dev/null | grep -q ."
-warn  "GPG signing enabled"      "[ \"\$(git config --global commit.gpgsign 2>/dev/null)\" = 'true' ]"
 
 echo ""
 echo "--- Broken Symlinks in ~ ---"

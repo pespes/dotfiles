@@ -54,35 +54,9 @@ Then work through the [Post-Install Checklist](#post-install-checklist).
    chmod 644 ~/.ssh/*.pub
    ```
 
-## GPG Setup
-
-1. Install GPG (via Brewfile):
-   ```bash
-   brew install gnupg pinentry-mac
-   ```
-2. Generate a key:
-   ```bash
-   gpg --full-generate-key
-   # Choose: RSA, 4096 bits, your name and email
-   ```
-3. Get your key ID:
-   ```bash
-   gpg --list-secret-keys --keyid-format=long
-   # Copy the ID after "sec rsa4096/"
-   ```
-4. Configure git signing:
-   ```bash
-   git config --global user.signingkey YOUR_KEY_ID
-   ```
-5. Add public key to GitHub → Settings → GPG Keys:
-   ```bash
-   gpg --armor --export YOUR_KEY_ID | pbcopy
-   ```
-
 ## Post-Install Checklist
 
 - [ ] Generate SSH key and add to GitHub (see [SSH Setup](#ssh-setup))
-- [ ] Generate GPG key and configure git signing (see [GPG Setup](#gpg-setup))
 - [ ] Sign into iCloud
 - [ ] Set macOS system preferences (keyboard repeat rate, dock, etc.)
 - [ ] Open apps that require license activation

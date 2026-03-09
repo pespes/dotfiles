@@ -1,7 +1,7 @@
 # dotfiles/Makefile
 
 DOTFILES_DIR := $(shell pwd)
-STOW_PACKAGES := zsh git ssh lang gnupg claude
+STOW_PACKAGES := zsh git ssh lang claude
 
 .PHONY: help install link update backup doctor audit editors
 
@@ -32,7 +32,7 @@ backup: ## Snapshot current Homebrew state
 	@brew bundle dump --file=homebrew/Brewfile.backup --force
 	@echo "==> Backup saved to homebrew/Brewfile.backup"
 
-doctor: ## Check for broken symlinks, missing tools, SSH/GPG config
+doctor: ## Check for broken symlinks, missing tools, SSH config
 	@echo "==> Running doctor checks..."
 	@bash scripts/doctor.sh
 

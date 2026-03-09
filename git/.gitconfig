@@ -4,7 +4,6 @@
 [user]
 	name = Peter Esveld
 	email = peter.esveld@gmail.com
-	signingkey = E627597C59B12434
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f
@@ -21,8 +20,3 @@
 [init]
 	defaultBranch = main
 
-[commit]
-	gpgsign = true
-
-[gpg]
-	program = gpg
