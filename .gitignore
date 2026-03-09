@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+.DS_Store?
+._*
+
+# Secrets — never commit these
+.ssh/id_*
+.ssh/known_hosts
+.env
+*.pem
+*.key
+
+# Homebrew caches
+.bundle/
+
+# Backup files created during migration
+*.backup
+
+# Editor artifacts
+*.swp
+*.swo
