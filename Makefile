@@ -1,7 +1,7 @@
 # dotfiles/Makefile
 
 DOTFILES_DIR := $(shell pwd)
-STOW_PACKAGES := zsh git ssh lang gnupg
+STOW_PACKAGES := zsh git ssh lang gnupg claude
 
 .PHONY: help install link update backup doctor audit editors
 
