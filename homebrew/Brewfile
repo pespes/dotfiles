@@ -1,0 +1,67 @@
+# homebrew/Brewfile
+# Curated list of intentionally installed tools.
+# Auto-installed dependencies are NOT listed here — brew handles those automatically.
+# Run: brew bundle --file=homebrew/Brewfile
+# Check drift: make audit
+
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/cask-fonts"
+
+# -----------------------------------------------------------------------------
+# Shell & Terminal
+# -----------------------------------------------------------------------------
+brew "bash"           # Keep Bash current alongside zsh
+brew "coreutils"      # GNU core utilities (gls, gdate, etc.)
+brew "spaceship"      # Zsh prompt theme
+brew "zsh-async"      # Async support for zsh plugins
+brew "rlwrap"         # Readline wrapper (used with Clojure REPL)
+
+# -----------------------------------------------------------------------------
+# Version Control
+# -----------------------------------------------------------------------------
+brew "gh"             # GitHub CLI
+
+# -----------------------------------------------------------------------------
+# Language Version Managers
+# -----------------------------------------------------------------------------
+brew "fnm"            # Fast Node Manager (Node.js)
+brew "pyenv"          # Python version manager
+brew "pyenv-virtualenv" # pyenv plugin: manage virtualenvs
+brew "rustup"         # Rust toolchain manager
+
+# -----------------------------------------------------------------------------
+# Languages & Runtimes
+# -----------------------------------------------------------------------------
+brew "clojure"        # Clojure language + Clojure CLI tools
+brew "sbcl"           # Steel Bank Common Lisp
+brew "deno"           # Deno JavaScript/TypeScript runtime
+brew "dotnet@8"       # .NET 8 SDK (LTS)
+brew "dotnet@9"       # .NET 9 SDK
+# Note: Java is managed by SDKMAN (installed by scripts/install.sh)
+# Note: Ruby is managed by rbenv (installed by scripts/install.sh)
+# Note: openjdk installed as dependency — not tracked separately
+
+# -----------------------------------------------------------------------------
+# Media & File Processing
+# -----------------------------------------------------------------------------
+brew "ffmpeg"         # Video/audio processing
+brew "yt-dlp"         # Video downloader (YouTube, etc.)
+
+# -----------------------------------------------------------------------------
+# Development Tools
+# -----------------------------------------------------------------------------
+brew "cmake"          # Cross-platform build system
+brew "watchman"       # File watching service (used by React Native, etc.)
+brew "ios-deploy"     # Deploy to iOS devices from CLI
+brew "zeromq"         # Messaging library
+
+# -----------------------------------------------------------------------------
+# Automation & Services
+# -----------------------------------------------------------------------------
+brew "jackett"        # API support for torrent trackers
+
+# -----------------------------------------------------------------------------
+# Fonts
+# -----------------------------------------------------------------------------
+cask "font-hack-nerd-font"  # Developer font with icons/glyphs
