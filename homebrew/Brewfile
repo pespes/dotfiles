@@ -5,8 +5,6 @@
 # Check drift: make audit
 
 tap "homebrew/bundle"
-tap "homebrew/cask"
-tap "homebrew/cask-fonts"
 
 # -----------------------------------------------------------------------------
 # Shell & Terminal
@@ -19,16 +17,20 @@ brew "zsh-async"      # Async support for zsh plugins
 brew "rlwrap"         # Readline wrapper (used with Clojure REPL)
 
 # -----------------------------------------------------------------------------
-# Version Control
+# Version Control & Security
 # -----------------------------------------------------------------------------
 brew "gh"             # GitHub CLI
+brew "gnupg"          # GPG — git commit signing (see README for setup)
 
 # -----------------------------------------------------------------------------
 # Language Version Managers
 # -----------------------------------------------------------------------------
 brew "fnm"            # Fast Node Manager (Node.js)
+brew "pnpm"           # Fast, disk-efficient Node package manager
 brew "pyenv"          # Python version manager
 brew "pyenv-virtualenv" # pyenv plugin: manage virtualenvs
+brew "rbenv"          # Ruby version manager
+brew "ruby-build"     # rbenv plugin: install Ruby versions
 brew "rustup"         # Rust toolchain manager
 
 # -----------------------------------------------------------------------------
@@ -40,7 +42,6 @@ brew "deno"           # Deno JavaScript/TypeScript runtime
 brew "dotnet@8"       # .NET 8 SDK (LTS)
 brew "dotnet@9"       # .NET 9 SDK
 # Note: Java is managed by SDKMAN (installed by scripts/install.sh)
-# Note: Ruby is managed by rbenv (installed by scripts/install.sh)
 # Note: openjdk installed as dependency — not tracked separately
 
 # -----------------------------------------------------------------------------
