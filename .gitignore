@@ -5,7 +5,6 @@
 
 # Secrets — never commit these
 .ssh/id_*
-.ssh/known_hosts
 .env
 *.pem
 *.key

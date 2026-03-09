@@ -2,6 +2,8 @@
 
 Personal macOS development environment — source of truth.
 
+> **Status:** Under active construction — structure and scripts are being built.
+
 ## Quick Start (Fresh Mac)
 
 ```bash
