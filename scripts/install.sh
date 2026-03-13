@@ -15,7 +15,33 @@ echo "==> Installing tools..."
 echo "--> Installing Homebrew packages from Brewfile..."
 brew bundle --file="$DOTFILES_DIR/homebrew/Brewfile"
 
-# 2. fnm (Node)
+# 2. oh-my-zsh + plugins
+if confirm "--> Set up oh-my-zsh?"; then
+  if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    echo "    Installing oh-my-zsh..."
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  else
+    echo "    oh-my-zsh already installed. Skipping."
+  fi
+
+  ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+
+  if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
+    echo "    Installing zsh-autosuggestions..."
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+  else
+    echo "    zsh-autosuggestions already installed. Skipping."
+  fi
+
+  if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
+    echo "    Installing zsh-syntax-highlighting..."
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+  else
+    echo "    zsh-syntax-highlighting already installed. Skipping."
+  fi
+fi
+
+# 3. fnm (Node)
 if confirm "--> Set up Node via fnm?"; then
   if ! command -v fnm &>/dev/null; then brew install fnm; fi
   eval "$(fnm env)"
@@ -27,7 +53,7 @@ if confirm "--> Set up Node via fnm?"; then
   bash "$DOTFILES_DIR/lang/node-globals.sh"
 fi
 
-# 3. rbenv (Ruby)
+# 4. rbenv (Ruby)
 if confirm "--> Set up Ruby via rbenv?"; then
   if ! command -v rbenv &>/dev/null; then brew install rbenv ruby-build; fi
   eval "$(rbenv init -)"
@@ -43,7 +69,7 @@ if confirm "--> Set up Ruby via rbenv?"; then
   fi
 fi
 
-# 4. pyenv (Python)
+# 5. pyenv (Python)
 if confirm "--> Set up Python via pyenv?"; then
   if ! command -v pyenv &>/dev/null; then brew install pyenv; fi
   eval "$(pyenv init -)"
@@ -59,7 +85,7 @@ if confirm "--> Set up Python via pyenv?"; then
   fi
 fi
 
-# 5. rustup (Rust)
+# 6. rustup (Rust)
 if confirm "--> Set up Rust via rustup?"; then
   if ! command -v rustup &>/dev/null; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
@@ -68,7 +94,7 @@ if confirm "--> Set up Rust via rustup?"; then
   bash "$DOTFILES_DIR/lang/rust-globals.sh"
 fi
 
-# 6. SDKMAN (Java)
+# 7. SDKMAN (Java)
 if confirm "--> Set up Java via SDKMAN?"; then
   if [ ! -d "$HOME/.sdkman" ]; then
     curl -s "https://get.sdkman.io" | bash
