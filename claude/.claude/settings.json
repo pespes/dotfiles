@@ -290,7 +290,10 @@
       "Bash(git -C /Users/peteresveld/Documents/GitHub/qm-figma-tokens-parser add src/shared/types.ts)",
       "Bash(git -C /Users/peteresveld/Documents/GitHub/qm-figma-tokens-parser commit -m \"feat: add alias fields to FigmaVariableEntry and AuditLeaf types\")",
       "Bash(git -C /Users/peteresveld/Documents/GitHub/qm-figma-tokens-parser add src/main/figmaExtractor.ts)",
-      "Bash(git -C /Users/peteresveld/Documents/GitHub/qm-figma-tokens-parser commit -m ' *)"
+      "Bash(git -C /Users/peteresveld/Documents/GitHub/qm-figma-tokens-parser commit -m ' *)",
+      "Bash(sed -n '1,60p' \"LLM context/qm-design-system-main/libs/ui-tokens/tokens/semantic/type.tokens.json\")",
+      "Bash(sed -n '1,80p' \"LLM context/qm-design-system-main/libs/ui-tokens/tokens/primitives/type.tokens.json\")",
+      "Bash(node -e 'const j=require\\('\\\\''/Users/peteresveld/Downloads/qm-design-system-main/libs/ui-tokens/tokens/semantic/color.tokens.json'\\\\''\\); const c=j.color||j; console.log\\(Object.keys\\(c\\).filter\\(k=>!k.startsWith\\('\\\\''$'\\\\''\\)\\)\\);')"
     ],
     "defaultMode": "default",
     "additionalDirectories": [
