@@ -22,7 +22,7 @@ link: ## Sync all dotfile symlinks (safe to run anytime)
 	@bash scripts/link.sh
 	@echo "==> Done."
 
-update: ## Update Homebrew, language managers, and global packages
+update: ## Upgrade Brewfile packages, globals, and editor extensions
 	@echo "==> Updating..."
 	@bash scripts/update.sh
 	@echo "==> Done."
@@ -36,7 +36,7 @@ doctor: ## Check for broken symlinks, missing tools, SSH config
 	@echo "==> Running doctor checks..."
 	@bash scripts/doctor.sh
 
-audit: ## Show drift: what's installed but not tracked, and vice versa
+audit: ## Show drift vs repo (exit 1 when issues found)
 	@echo "==> Auditing environment drift..."
 	@bash scripts/audit.sh
 

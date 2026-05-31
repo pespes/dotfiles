@@ -14,12 +14,12 @@ brew "bash"           # Keep Bash current alongside zsh
 brew "coreutils"      # GNU core utilities (gls, gdate, etc.)
 brew "spaceship"      # Zsh prompt theme
 brew "zsh-async"      # Async support for zsh plugins
-brew "rlwrap"         # Readline wrapper (used with Clojure REPL)
-
 # -----------------------------------------------------------------------------
 # Version Control
 # -----------------------------------------------------------------------------
 brew "gh"             # GitHub CLI
+brew "gnupg"          # GPG — commit signing and encryption
+brew "pinentry-mac"   # macOS passphrase prompts for gpg
 
 # -----------------------------------------------------------------------------
 # Language Version Managers
@@ -34,13 +34,11 @@ brew "rustup"         # Rust toolchain manager
 # -----------------------------------------------------------------------------
 # Languages & Runtimes
 # -----------------------------------------------------------------------------
-brew "clojure"        # Clojure language + Clojure CLI tools
 brew "sbcl"           # Steel Bank Common Lisp
 brew "deno"           # Deno JavaScript/TypeScript runtime
 brew "dotnet@8"       # .NET 8 SDK (LTS)
 brew "dotnet@9"       # .NET 9 SDK
-# Note: Java is managed by SDKMAN (installed by scripts/install.sh)
-# Note: openjdk installed as dependency — not tracked separately
+# Note: Java is managed by SDKMAN when installed (see scripts/install.sh)
 
 # -----------------------------------------------------------------------------
 # Media & File Processing

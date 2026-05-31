@@ -2,10 +2,9 @@
 # Run by launchd weekly — checks for environment drift and notifies if found
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-AUDIT_OUTPUT=$(bash "$DOTFILES_DIR/scripts/audit.sh" 2>&1)
+AUDIT_OUTPUT=$(bash "$DOTFILES_DIR/scripts/audit.sh" 2>&1) || true
 
-# Notify if anything needs attention
-if echo "$AUDIT_OUTPUT" | grep -qE "Would uninstall|Not tracked:|!.*symlink"; then
+if echo "$AUDIT_OUTPUT" | grep -q 'AUDIT_STATUS: drift'; then
   terminal-notifier \
     -title "dotfiles audit" \
     -message "Environment drift detected. Run 'make audit' to review." \

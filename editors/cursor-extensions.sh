@@ -4,8 +4,8 @@
 # Or:  make editors
 #
 # Cursor has built-in AI (no need for copilot-chat, claude-code).
-# Cursor uses its own Pyright — ms-python.vscode-pylance not listed.
-# redhat.vscode-yaml auto-installs with atlassian.atlascode — not listed separately.
+# Cursor uses its own Pyright (anysphere.cursorpyright) — not listed here.
+# Remote SSH uses anysphere.remote-ssh, not ms-vscode-remote.remote-ssh*.
 
 set -euo pipefail
 
@@ -15,13 +15,13 @@ CURSOR=/Applications/Cursor.app/Contents/Resources/app/bin/cursor
 # AI
 # -----------------------------------------------------------------------------
 "$CURSOR" --install-extension google.geminicodeassist                    # Gemini AI code assist
+"$CURSOR" --install-extension visualstudioexptteam.vscodeintellicode       # AI-assisted completions
 
 # -----------------------------------------------------------------------------
 # Git & Version Control
 # -----------------------------------------------------------------------------
 "$CURSOR" --install-extension eamodio.gitlens                            # Advanced git history, blame, and insights
 "$CURSOR" --install-extension github.vscode-github-actions               # GitHub Actions workflow support
-"$CURSOR" --install-extension atlassian.atlascode                        # Jira & Confluence integration
 
 # -----------------------------------------------------------------------------
 # JavaScript / TypeScript / React / React Native
@@ -57,15 +57,6 @@ CURSOR=/Applications/Cursor.app/Contents/Resources/app/bin/cursor
 "$CURSOR" --install-extension ms-toolsai.jupyter                         # Jupyter notebook support
 
 # -----------------------------------------------------------------------------
-# Java
-# -----------------------------------------------------------------------------
-"$CURSOR" --install-extension redhat.java                                # Java language support
-"$CURSOR" --install-extension vscjava.vscode-java-debug                  # Java debugger
-"$CURSOR" --install-extension vscjava.vscode-java-dependency             # Java dependency viewer
-"$CURSOR" --install-extension vscjava.vscode-java-test                   # Java test runner
-"$CURSOR" --install-extension vscjava.vscode-maven                       # Maven support
-
-# -----------------------------------------------------------------------------
 # Rust
 # -----------------------------------------------------------------------------
 "$CURSOR" --install-extension rust-lang.rust-analyzer                    # Rust language server
@@ -84,10 +75,8 @@ CURSOR=/Applications/Cursor.app/Contents/Resources/app/bin/cursor
 # -----------------------------------------------------------------------------
 # Remote Development & Containers
 # -----------------------------------------------------------------------------
-"$CURSOR" --install-extension ms-vscode-remote.remote-ssh                # SSH remote development
-"$CURSOR" --install-extension ms-vscode-remote.remote-ssh-edit           # Edit SSH config files
+"$CURSOR" --install-extension anysphere.remote-ssh                       # SSH remote development (Cursor fork)
 "$CURSOR" --install-extension ms-vscode-remote.remote-containers         # Dev Containers support
-"$CURSOR" --install-extension ms-vscode.remote-explorer                  # Remote Explorer panel
 "$CURSOR" --install-extension ms-azuretools.vscode-docker                # Docker support
 "$CURSOR" --install-extension ms-azuretools.vscode-containers            # Container tools
 "$CURSOR" --install-extension gitpod.gitpod-desktop                      # Gitpod integration
@@ -113,4 +102,5 @@ CURSOR=/Applications/Cursor.app/Contents/Resources/app/bin/cursor
 "$CURSOR" --install-extension christian-kohler.path-intellisense         # File path autocomplete
 "$CURSOR" --install-extension christian-kohler.npm-intellisense          # npm package autocomplete
 "$CURSOR" --install-extension figma.figma-vscode-extension               # Figma design integration
+"$CURSOR" --install-extension redhat.vscode-yaml                         # YAML support (required by expo.vscode-expo-tools)
 "$CURSOR" --install-extension expo.vscode-expo-tools                     # Expo (React Native) tools

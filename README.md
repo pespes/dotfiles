@@ -18,10 +18,10 @@ Then work through the [Post-Install Checklist](#post-install-checklist).
 |---|---|
 | `make install` | Full fresh-Mac setup |
 | `make link` | Sync symlinks (safe anytime) |
-| `make update` | Update all tools |
+| `make update` | Upgrade Brewfile packages, language globals, and editor extensions |
 | `make backup` | Snapshot current state |
 | `make doctor` | Check environment health |
-| `make audit` | Show environment drift |
+| `make audit` | Show environment drift (exits 1 if issues found) |
 | `make help` | Show all commands |
 
 ## What's Managed
@@ -66,7 +66,7 @@ Then work through the [Post-Install Checklist](#post-install-checklist).
 
 | When | Command |
 |---|---|
-| Daily/weekly | `make update` |
+| Daily/weekly | `make update` (Brewfile-only Homebrew — not every formula on your Mac) |
 | After installing anything | `make audit` |
 | After adding a dotfile | `make link && git commit` |
 | Something feels broken | `make doctor` |

@@ -3,8 +3,6 @@
 # Run: bash editors/vscode-extensions.sh
 # Or:  make editors
 #
-# Auto-installed dependencies are NOT listed (e.g. redhat.vscode-yaml auto-installs
-# with atlassian.atlascode).
 # VS Code-specific extensions (not in Cursor) are marked with [VS Code only].
 
 set -euo pipefail
@@ -15,14 +13,12 @@ code --install-extension anthropic.claude-code                          # Claude
 # AI
 # -----------------------------------------------------------------------------
 code --install-extension google.geminicodeassist                        # Gemini AI code assist
-code --install-extension github.copilot-chat                            # GitHub Copilot AI chat [VS Code only]
 
 # -----------------------------------------------------------------------------
 # Git & Version Control
 # -----------------------------------------------------------------------------
 code --install-extension eamodio.gitlens                                # Advanced git history, blame, and insights
 code --install-extension github.vscode-github-actions                   # GitHub Actions workflow support
-code --install-extension atlassian.atlascode                            # Jira & Confluence integration
 
 # -----------------------------------------------------------------------------
 # JavaScript / TypeScript / React / React Native
@@ -56,15 +52,6 @@ code --install-extension ms-python.python                               # Python
 code --install-extension ms-python.debugpy                              # Python debugger
 code --install-extension ms-python.isort                                # Python import sorting
 code --install-extension ms-toolsai.jupyter                             # Jupyter notebook support
-
-# -----------------------------------------------------------------------------
-# Java
-# -----------------------------------------------------------------------------
-code --install-extension redhat.java                                    # Java language support
-code --install-extension vscjava.vscode-java-debug                      # Java debugger
-code --install-extension vscjava.vscode-java-dependency                 # Java dependency viewer
-code --install-extension vscjava.vscode-java-test                       # Java test runner
-code --install-extension vscjava.vscode-maven                           # Maven support
 
 # -----------------------------------------------------------------------------
 # Rust
@@ -115,4 +102,5 @@ code --install-extension mechatroner.rainbow-csv                        # Colori
 code --install-extension christian-kohler.path-intellisense             # File path autocomplete
 code --install-extension christian-kohler.npm-intellisense              # npm package autocomplete
 code --install-extension figma.figma-vscode-extension                   # Figma design integration
+code --install-extension redhat.vscode-yaml                             # YAML support (required by expo.vscode-expo-tools)
 code --install-extension expo.vscode-expo-tools                         # Expo (React Native) tools

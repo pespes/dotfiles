@@ -95,5 +95,7 @@ make audit
 
 - `anthropic.claude-code` and `github.copilot-chat` are VS Code only — Cursor has built-in AI
 - `github.github-vscode-theme` is VS Code only — theme preference differs per editor
-- `redhat.vscode-yaml` is auto-installed by `atlassian.atlascode` — not tracked separately
+- `redhat.vscode-yaml` — tracked explicitly (required by `expo.vscode-expo-tools`)
+- Cursor Remote SSH — use `anysphere.remote-ssh` in `cursor-extensions.sh`, not `ms-vscode-remote.remote-ssh*`
+- `anysphere.cursorpyright` — Cursor-bundled Python support; omitted from scripts and audit
 - Python interpreter is managed by pyenv — no `python.defaultInterpreterPath` override needed in settings
