@@ -4,7 +4,7 @@ DOTFILES_DIR := $(shell pwd)
 # Keep in sync with PACKAGES in scripts/link.sh
 STOW_PACKAGES := zsh git ssh lang claude
 
-.PHONY: help install link update backup doctor audit editors bootstrap install-tools
+.PHONY: help install link update backup doctor audit editors bootstrap install-tools lint
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -45,6 +45,10 @@ doctor: ## Health check: tools, symlinks, Brewfile (exit 1 if required checks fa
 audit: ## Show drift vs repo (exit 1 when issues found)
 	@echo "==> Auditing environment drift..."
 	@bash scripts/audit.sh
+
+lint: ## Shellcheck all bash scripts at warning level (zsh/.zshrc excluded — it's zsh)
+	@command -v shellcheck >/dev/null 2>&1 || { echo "shellcheck not found — run: make install-tools"; exit 1; }
+	@shellcheck -x -S warning scripts/*.sh scripts/lib/common.sh editors/*.sh lang/*.sh && echo "✓ shellcheck clean (warning level)"
 
 editors: ## Install curated VS Code and Cursor extensions
 	@echo "==> Installing editor extensions..."
