@@ -21,9 +21,11 @@ Then work through the [Post-Install Checklist](#post-install-checklist).
 | `make install-tools` | Brewfile + optional languages (no symlinks/editors) |
 | `make link` | Stow dotfiles into ~ + weekly audit job (safe anytime) |
 | `make update` | Upgrade Brewfile packages, language globals, and editor extensions |
+| `make editors` | Install curated VS Code + Cursor extensions |
 | `make backup` | Dump all Homebrew packages to `homebrew/Brewfile.backup` (compare with Brewfile) |
 | `make doctor` | Health check: tools, symlinks, Brewfile installs (exit 1 on failure) |
 | `make audit` | Show environment drift (exits 1 if issues found) |
+| `make lint` | Shellcheck all bash scripts at warning level (`zsh/.zshrc` is zsh, not linted) |
 | `make help` | Show all commands |
 
 ## Scripts
@@ -89,5 +91,6 @@ Java is **not** in the Brewfile. Dev shells get `java` / `JAVA_HOME` from SDKMAN
 | Daily/weekly | `make update` (Brewfile-only Homebrew — not every formula on your Mac) |
 | After installing anything | `make audit` |
 | After adding a dotfile | `make link && git commit` |
+| After editing a script | `make lint` before committing |
 | Something feels broken | `make doctor`, then `make audit` |
 | Before major Brewfile changes | `make backup`, then diff against `homebrew/Brewfile` |

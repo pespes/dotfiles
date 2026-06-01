@@ -9,7 +9,10 @@
       "Bash(command -v shellcheck)",
       "Bash(shellcheck --version)",
       "Bash(/usr/bin/time -p zsh -i -c exit)",
-      "Bash(make lint *)"
+      "Bash(make lint *)",
+      "Bash(nslookup github.com)",
+      "Bash(ping -c1 -t3 github.com)",
+      "Bash(awk '/^print_summary\\\\\\(\\\\\\) \\\\{/,/^\\\\}/' scripts/update.sh)"
     ],
     "additionalDirectories": [
       "/tmp",

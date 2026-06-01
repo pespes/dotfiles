@@ -23,6 +23,7 @@ source "$DOTFILES_DIR/scripts/lib/common.sh"
 
 STEP_FAILURES=0
 declare -a FAILED_STEPS=()
+declare -a WARN_STEPS=()
 
 # --- Output helpers ---
 
@@ -39,6 +40,12 @@ fail() {
   echo "    ✗ $1"
   STEP_FAILURES=$((STEP_FAILURES + 1))
   FAILED_STEPS+=("$1")
+}
+
+# Non-fatal: the step continues, but the warning is surfaced in the summary.
+warn() {
+  echo "    ! $1"
+  WARN_STEPS+=("$1")
 }
 
 # Run a step; continue on failure and report at the end.
@@ -96,7 +103,12 @@ update_homebrew() {
     echo "    ✗ Brewfile missing at homebrew/Brewfile"
     return 1
   fi
-  brew update
+  # A failed `brew update` is usually a transient network/DNS blip and shouldn't
+  # abort the run — bundle install still works against the existing local taps —
+  # but it must not be reported as a clean success either.
+  if ! brew update; then
+    warn "brew update failed (likely network/DNS) — upgraded against existing taps; re-run when online"
+  fi
   # Upgrade only packages listed in the Brewfile (not every formula on the system).
   brew bundle install --file="$BREWFILE" --upgrade
   brew cleanup
@@ -224,6 +236,14 @@ print_summary() {
   echo "==> Summary"
   if [ "$STEP_FAILURES" -eq 0 ]; then
     echo "    All update steps completed."
+    if [ "${#WARN_STEPS[@]}" -gt 0 ]; then
+      echo ""
+      echo "    ${#WARN_STEPS[@]} warning(s):"
+      local w
+      for w in "${WARN_STEPS[@]}"; do
+        echo "      - $w"
+      done
+    fi
     echo ""
     echo "    Language runtime versions are not auto-bumped."
     echo "    To change a runtime: edit lang/.tool-versions, reinstall, then commit."
@@ -233,7 +253,11 @@ print_summary() {
     echo "    After installing new tools: make audit"
     echo "    Java PATH is set in zsh — run: exec zsh   (or open a new tab) if java -version still fails"
     echo ""
-    echo "UPDATE_STATUS: ok"
+    if [ "${#WARN_STEPS[@]}" -gt 0 ]; then
+      echo "UPDATE_STATUS: ok_with_warnings (${#WARN_STEPS[@]} warning(s))"
+    else
+      echo "UPDATE_STATUS: ok"
+    fi
     return 0
   fi
   echo "    $STEP_FAILURES step(s) failed:"
