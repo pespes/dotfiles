@@ -4,7 +4,8 @@
 #
 # Usage:     make update
 # Mutates:   Homebrew (Brewfile only), fnm/rbenv/pyenv globals, rustup, SDKMAN, extensions.
-# Does NOT:  Change pins in lang/.tool-versions (runtime upgrades are explicit edits + reinstall).
+# Does NOT:  Change language-runtime pins in lang/.tool-versions (node/ruby/python/rust/java are explicit edits + reinstall).
+# pnpm:      Exception — tracks latest stable (pnpm@latest) and the installed version is auto-recorded in lang/.tool-versions.
 # Exit:      0 UPDATE_STATUS: ok; 1 if any step failed (continues through remaining steps).
 #
 # Homebrew:  brew update → brew bundle install --upgrade (Brewfile) → brew cleanup.
@@ -63,6 +64,27 @@ run_globals_script() {
   bash "$script"
 }
 
+# pnpm tracks latest stable (pnpm@latest in node-globals.sh); record the installed
+# version back into lang/.tool-versions so each bump is visible in git. User commits.
+record_pnpm_version() {
+  command -v pnpm &>/dev/null || return 0
+  [ -f "$TOOL_VERSIONS" ] || return 0
+  local version line tmp
+  version="$(pnpm --version 2>/dev/null || true)"
+  [ -n "$version" ] || return 0
+  line="pnpm    ${version}  # tracked-latest stable; auto-recorded by make update"
+  tmp="$(mktemp)"
+  if grep -qE '^pnpm[[:space:]]' "$TOOL_VERSIONS"; then
+    if ! awk -v repl="$line" '/^pnpm[[:space:]]/{print repl; next} {print}' "$TOOL_VERSIONS" > "$tmp"; then
+      rm -f "$tmp"; return 0
+    fi
+  else
+    cp "$TOOL_VERSIONS" "$tmp" && printf '%s\n' "$line" >> "$tmp"
+  fi
+  mv "$tmp" "$TOOL_VERSIONS"
+  ok "pnpm $version (recorded in lang/.tool-versions)"
+}
+
 # --- Update steps (each called via run_step; failures are collected) ---
 
 update_homebrew() {
@@ -99,6 +121,7 @@ update_node() {
     echo "    (no node pin in lang/.tool-versions — using current fnm default)"
   fi
   run_globals_script "$DOTFILES_DIR/lang/node-globals.sh"
+  record_pnpm_version
 }
 
 update_ruby() {
@@ -204,6 +227,8 @@ print_summary() {
     echo ""
     echo "    Language runtime versions are not auto-bumped."
     echo "    To change a runtime: edit lang/.tool-versions, reinstall, then commit."
+    echo ""
+    echo "    pnpm tracked latest stable; if it bumped, lang/.tool-versions changed — review: git diff lang/.tool-versions, then commit."
     echo ""
     echo "    After installing new tools: make audit"
     echo "    Java PATH is set in zsh — run: exec zsh   (or open a new tab) if java -version still fails"
