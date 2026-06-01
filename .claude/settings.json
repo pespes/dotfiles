@@ -12,7 +12,20 @@
       "Bash(make lint *)",
       "Bash(nslookup github.com)",
       "Bash(ping -c1 -t3 github.com)",
-      "Bash(awk '/^print_summary\\\\\\(\\\\\\) \\\\{/,/^\\\\}/' scripts/update.sh)"
+      "Bash(awk '/^print_summary\\\\\\(\\\\\\) \\\\{/,/^\\\\}/' scripts/update.sh)",
+      "Bash(command -v mise)",
+      "Bash(mise --version)",
+      "Read(//Users/peteresveld/.sdkman/candidates/**)",
+      "Read(//Users/peteresveld/.sdkman/candidates/java/**)",
+      "Read(//Users/peteresveld/.pyenv/versions/**)",
+      "Bash(grep -E '^\\(fnm|pyenv|pyenv-virtualenv|rbenv|ruby-build|rustup|mise\\)$')",
+      "Bash(ls -la /homebrew)",
+      "Bash(mise settings *)",
+      "Bash(mise env *)",
+      "Bash(mise ls-remote *)",
+      "Bash(mise registry *)",
+      "Bash(mise current *)",
+      "Bash(grep -E '^v?24\\\\.14\\\\.0$')"
     ],
     "additionalDirectories": [
       "/tmp",
