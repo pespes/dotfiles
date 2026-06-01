@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # lib/common.sh — Shared helpers for dotfiles scripts.
 #
 # Usage:  source "$DOTFILES_DIR/scripts/lib/common.sh"   (never execute directly)

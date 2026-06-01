@@ -2,7 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(pnpm --version)",
-      "Bash(corepack --version)"
+      "Bash(corepack --version)",
+      "Bash(brew install *)",
+      "Bash(/opt/homebrew/bin/shellcheck -x -S warning scripts/*.sh scripts/lib/common.sh editors/*.sh lang/*.sh)",
+      "Bash(cd /tmp && cp /Users/peteresveld/Documents/GitHub/dotfiles/lang/node-globals.sh test-node-globals.sh *)"
+    ],
+    "additionalDirectories": [
+      "/tmp",
+      "/Users/peteresveld/Documents/GitHub/dotfiles"
     ]
   }
 }

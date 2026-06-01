@@ -53,13 +53,27 @@ brew() {
   fi
 }
 
+# Insert a package as a continuation line right after the install command's head
+# line (which ends with "\"). Appending at EOF would orphan it after the list's
+# final, backslash-less line and break the script under `set -e`.
+_dotfiles_track_continuation() {
+  local globals="$1" head_regex="$2" pkg="$3"
+  awk -v pkg="$pkg" -v head="$head_regex" '
+    { print }
+    $0 ~ head && !ins { print "  " pkg " \\"; ins = 1 }
+  ' "$globals" >"$globals.tmp" && mv "$globals.tmp" "$globals"
+}
+
+# Already listed? Fixed-string match avoids treating package names as regexes.
+_dotfiles_tracked() { grep -qF -- "$1" "$2" 2>/dev/null; }
+
 npm() {
   command npm "$@"
   if [[ "$1" == "install" && "$2" == "-g" && -n "$3" ]]; then
     local pkg="$3"
     local globals="$DOTFILES_DIR/lang/node-globals.sh"
-    if ! grep -q "$pkg" "$globals" 2>/dev/null; then
-      echo "  $pkg \\" >> "$globals"
+    if ! _dotfiles_tracked "$pkg" "$globals"; then
+      _dotfiles_track_continuation "$globals" '^npm install -g' "$pkg"
       echo "dotfiles → Added '$pkg' to node-globals.sh. Commit when ready."
     fi
   fi
@@ -67,11 +81,11 @@ npm() {
 
 pip() {
   command pip "$@"
-  if [[ "$1" == "install" && -n "$2" && "$2" != "--upgrade" ]]; then
+  if [[ "$1" == "install" && -n "$2" && "$2" != "--upgrade" && "$2" != -* ]]; then
     local pkg="$2"
     local globals="$DOTFILES_DIR/lang/python-globals.sh"
-    if ! grep -q "$pkg" "$globals" 2>/dev/null; then
-      echo "  $pkg \\" >> "$globals"
+    if ! _dotfiles_tracked "$pkg" "$globals"; then
+      _dotfiles_track_continuation "$globals" '^pip install --upgrade' "$pkg"
       echo "dotfiles → Added '$pkg' to python-globals.sh. Commit when ready."
     fi
   fi
@@ -82,8 +96,8 @@ gem() {
   if [[ "$1" == "install" && -n "$2" ]]; then
     local pkg="$2"
     local globals="$DOTFILES_DIR/lang/ruby-globals.sh"
-    if ! grep -q "$pkg" "$globals" 2>/dev/null; then
-      echo "  $pkg \\" >> "$globals"
+    if ! _dotfiles_tracked "$pkg" "$globals"; then
+      _dotfiles_track_continuation "$globals" '^gem install' "$pkg"
       echo "dotfiles → Added '$pkg' to ruby-globals.sh. Commit when ready."
     fi
   fi

@@ -170,11 +170,13 @@ audit_npm_globals() {
         .forEach((name) => console.log(name));
     " 2>/dev/null || true
   )
+  # Strip a trailing @version spec (e.g. pnpm@latest -> pnpm) without clobbering
+  # the leading @scope of scoped packages (@anthropic-ai/claude-code stays intact).
   tracked_npm=$(
     awk '/npm install -g/ {next} /^[[:space:]]/ {
       gsub(/\\$/, ""); gsub(/^[[:space:]]+/, "");
       if ($1 != "") print $1
-    }' "$DOTFILES_DIR/lang/node-globals.sh" | sort
+    }' "$DOTFILES_DIR/lang/node-globals.sh" | sed -E 's/(.+)@[^@/]+$/\1/' | sort
   )
   untracked=$(list_extra "$tracked_npm" "$installed_npm")
   if [ -n "$untracked" ]; then
@@ -217,6 +219,7 @@ audit_editor_extensions() {
   local tracked installed ignore_filter untracked missing
   tracked=$(
     grep -- '--install-extension' "$script" |
+      grep -v '^[[:space:]]*#' |
       sed 's/.*--install-extension[[:space:]]*//' |
       sed 's/[[:space:]].*//' |
       sort
