@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
-# Rust components and cargo installs — run by make install and make update
+#
+# rust-globals.sh — Rust toolchain components and global cargo installs.
+#
+# Invoked by:  scripts/install.sh, scripts/update.sh (after rustup update)
+# Not stowed:  Repo only — see lang/.stow-local-ignore.
+# cargo:       Uncomment cargo install lines below as you add global tools.
+#
+set -euo pipefail
 
 rustup component add \
   clippy \

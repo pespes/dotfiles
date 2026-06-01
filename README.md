@@ -16,13 +16,19 @@ Then work through the [Post-Install Checklist](#post-install-checklist).
 
 | Command | Description |
 |---|---|
-| `make install` | Full fresh-Mac setup |
-| `make link` | Sync symlinks (safe anytime) |
+| `make install` | Full fresh-Mac setup (stops on first failed step) |
+| `make bootstrap` | Xcode CLT + Homebrew + stow only |
+| `make install-tools` | Brewfile + optional languages (no symlinks/editors) |
+| `make link` | Stow dotfiles into ~ + weekly audit job (safe anytime) |
 | `make update` | Upgrade Brewfile packages, language globals, and editor extensions |
-| `make backup` | Snapshot current state |
-| `make doctor` | Check environment health |
+| `make backup` | Dump all Homebrew packages to `homebrew/Brewfile.backup` (compare with Brewfile) |
+| `make doctor` | Health check: tools, symlinks, Brewfile installs (exit 1 on failure) |
 | `make audit` | Show environment drift (exits 1 if issues found) |
 | `make help` | Show all commands |
+
+## Scripts
+
+See [scripts/README.md](scripts/README.md) for what each `scripts/*.sh` file does and how they fit together.
 
 ## What's Managed
 
@@ -31,6 +37,20 @@ Then work through the [Post-Install Checklist](#post-install-checklist).
 - Git config (`git/`)
 - SSH config (`ssh/`)
 - Language version managers + global packages (`lang/`)
+
+### Language versions
+
+Pins live in `lang/.tool-versions`. `make install` / `make update` sync each manager; `make doctor` checks active versions.
+
+| Language | Manager | Pin example |
+|----------|---------|-------------|
+| Node | fnm | `v24.14.0` |
+| Ruby | rbenv | `3.3.10` |
+| Python | pyenv | `3.13.12` |
+| Rust | rustup | `stable-aarch64-apple-darwin` |
+| Java | SDKMAN (Temurin) | `21.0.11-tem` — use `sdk list java` when bumping |
+
+Java is **not** in the Brewfile. Dev shells get `java` / `JAVA_HOME` from SDKMAN (end of `zsh/.zshrc`). After removing system JDKs, `/usr/libexec/java_home` may report “no runtime”; that is expected — use a terminal with dotfiles loaded. `make update` syncs the pin via `sdk install` / `sdk default` only (not `sdk upgrade`, which prompts for SDKMAN channel defaults).
 
 ## SSH Setup
 
@@ -69,5 +89,5 @@ Then work through the [Post-Install Checklist](#post-install-checklist).
 | Daily/weekly | `make update` (Brewfile-only Homebrew — not every formula on your Mac) |
 | After installing anything | `make audit` |
 | After adding a dotfile | `make link && git commit` |
-| Something feels broken | `make doctor` |
-| Before major changes | `make backup` |
+| Something feels broken | `make doctor`, then `make audit` |
+| Before major Brewfile changes | `make backup`, then diff against `homebrew/Brewfile` |

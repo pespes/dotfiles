@@ -1,39 +1,45 @@
 # dotfiles/Makefile
 
 DOTFILES_DIR := $(shell pwd)
+# Keep in sync with PACKAGES in scripts/link.sh
 STOW_PACKAGES := zsh git ssh lang claude
 
-.PHONY: help install link update backup doctor audit editors
+.PHONY: help install link update backup doctor audit editors bootstrap install-tools
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-install: ## Full fresh-Mac setup: bootstrap → install → link → editors
-	@echo "==> Starting full install..."
+bootstrap: ## Xcode CLT, Homebrew, and stow (fresh Mac first step)
 	@bash scripts/bootstrap.sh
-	@bash scripts/install.sh
-	@bash scripts/link.sh
-	@bash scripts/vscode-setup.sh
-	@echo "==> Install complete. Work through README post-install checklist."
 
-link: ## Sync all dotfile symlinks (safe to run anytime)
-	@echo "==> Linking dotfiles..."
+install-tools: ## Brewfile + optional languages (no symlinks/editors)
+	@bash scripts/install.sh
+
+install: ## Full fresh-Mac setup: bootstrap → tools → link → editors
+	@echo "==> Starting full install..."
+	@set -e; \
+	bash scripts/bootstrap.sh; \
+	bash scripts/install.sh; \
+	bash scripts/link.sh; \
+	bash scripts/vscode-setup.sh; \
+	echo ""; \
+	echo "==> Install complete."; \
+	echo "    Open a new terminal, then: make audit"; \
+	echo "    Work through README post-install checklist."
+
+link: ## Sync dotfile symlinks via stow + audit launchd job (safe anytime)
 	@bash scripts/link.sh
-	@echo "==> Done."
 
 update: ## Upgrade Brewfile packages, globals, and editor extensions
 	@echo "==> Updating..."
 	@bash scripts/update.sh
 	@echo "==> Done."
 
-backup: ## Snapshot current Homebrew state
-	@echo "==> Backing up..."
-	@brew bundle dump --file=homebrew/Brewfile.backup --force
-	@echo "==> Backup saved to homebrew/Brewfile.backup"
+backup: ## Snapshot all Homebrew packages to Brewfile.backup (gitignored)
+	@bash scripts/backup.sh
 
-doctor: ## Check for broken symlinks, missing tools, SSH config
-	@echo "==> Running doctor checks..."
+doctor: ## Health check: tools, symlinks, Brewfile (exit 1 if required checks fail)
 	@bash scripts/doctor.sh
 
 audit: ## Show drift vs repo (exit 1 when issues found)

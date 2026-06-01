@@ -9,7 +9,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>/Users/peteresveld/Documents/GitHub/dotfiles/scripts/notify-audit.sh</string>
+        <string>__DOTFILES_DIR__/scripts/notify-audit.sh</string>
     </array>
 
     <key>StartCalendarInterval</key>

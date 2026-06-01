@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
-# Compare installed tools vs dotfiles repo. Read-only — makes no changes.
+#
+# audit.sh — Report environment drift (installed vs git-tracked).
+#
+# Usage:     make audit
+# Mutates:   Nothing (read-only).
+# Exit:      0 if AUDIT_STATUS: clean; 1 if drift found.
+#
+# Compares:
+#   - Homebrew top-level installs (brew leaves) vs homebrew/Brewfile
+#   - Brewfile entries vs brew list (missing installs)
+#   - Global npm vs lang/node-globals.sh
+#   - Broken symlinks in ~
+#   - VS Code / Cursor extensions vs editors/*-extensions.sh
+#
+# Output:  Sections with ✓ (ok) or ! (action needed). Summary lists deduped next steps.
+# Ignore:  CURSOR_EXTENSION_IGNORE, NPM_GLOBAL_IGNORE (bundled/tooling packages).
+#
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -8,6 +24,7 @@ BREWFILE="$DOTFILES_DIR/homebrew/Brewfile"
 ISSUE_COUNT=0
 declare -a ACTIONS=()
 
+# --- Configuration (intentionally untracked packages) ---
 # Extensions listed here are installed but intentionally omitted from install scripts.
 CURSOR_EXTENSION_IGNORE=(
   anysphere.cursorpyright
@@ -31,7 +48,8 @@ action() {
   ACTIONS+=("$1")
 }
 
-# Compare two sorted lists; print lines only in $2 (installed \ tracked).
+# --- List helpers (sorted input; use with brew leaves, extension IDs, etc.) ---
+
 # Lines in $2 that are not in $1 (e.g. installed minus tracked).
 list_extra() {
   comm -13 <(echo "$1") <(echo "$2") 2>/dev/null || true
@@ -41,6 +59,8 @@ list_extra() {
 list_missing() {
   comm -23 <(echo "$1") <(echo "$2") 2>/dev/null || true
 }
+
+# --- Audit sections ---
 
 audit_homebrew() {
   if ! command -v brew &>/dev/null; then
@@ -283,3 +303,4 @@ if [ -x "$CURSOR" ]; then
 fi
 
 print_summary
+exit $?

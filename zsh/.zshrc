@@ -37,7 +37,9 @@ eval "$(rbenv init - zsh)"
 # Uninstalls are NOT auto-removed (too risky) — run `make audit` to catch drift.
 # =============================================================================
 
-DOTFILES_DIR="$HOME/dotfiles"
+# Repo root — works for ~/dotfiles or any clone path (e.g. ~/Documents/GitHub/dotfiles)
+DOTFILES_DIR="${${(%):-%x}:A:h:h}"
+export DOTFILES_DIR
 
 brew() {
   command brew "$@"
@@ -106,12 +108,7 @@ cargo() {
 # Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 
-# pnpm
-export PNPM_HOME="$HOME/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
+# pnpm — via fnm Node + lang/node-globals.sh (npm install -g pnpm). No ~/Library/pnpm PATH.
 
 # Local bin
 export PATH="$HOME/.local/bin:$PATH"
@@ -119,6 +116,14 @@ export PATH="$HOME/.local/bin:$PATH"
 # iTerm2 shell integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-# SDKMAN (Java) — must be at end of file
+# SDKMAN (Java) — must be at end of file (sets JAVA_HOME; not /usr/libexec/java_home)
 export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+[[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+# Fallback if this session started before SDKMAN existed, or init did not set JAVA_HOME
+if [[ -x "$SDKMAN_DIR/candidates/java/current/bin/java" ]]; then
+  [[ -z "$JAVA_HOME" ]] && export JAVA_HOME="$SDKMAN_DIR/candidates/java/current"
+  case ":$PATH:" in
+    *":$JAVA_HOME/bin:"*) ;;
+    *) export PATH="$JAVA_HOME/bin:$PATH" ;;
+  esac
+fi

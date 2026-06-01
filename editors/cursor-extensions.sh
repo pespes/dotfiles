@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
-# Curated Cursor extensions
-# Run: bash editors/cursor-extensions.sh
-# Or:  make editors
 #
-# Cursor has built-in AI (no need for copilot-chat, claude-code).
-# Cursor uses its own Pyright (anysphere.cursorpyright) — not listed here.
-# Remote SSH uses anysphere.remote-ssh, not ms-vscode-remote.remote-ssh*.
+# cursor-extensions.sh — Curated Cursor extension IDs (source of truth for make audit).
+#
+# Usage:     make editors  (via scripts/vscode-setup.sh)
+# Mutates:   Installs via: cursor --install-extension <id>
+#
+# Cursor-specific notes:
+#   - Built-in AI — no copilot-chat / claude-code extensions here.
+#   - anysphere.cursorpyright is bundled — omitted from this list (see audit ignore).
+#   - Remote SSH: use anysphere.remote-ssh, not ms-vscode-remote.remote-ssh*.
+#
 
 set -euo pipefail
 

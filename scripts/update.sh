@@ -1,13 +1,29 @@
 #!/usr/bin/env bash
-# Update tools tracked in this repo. Does not bump language versions in lang/.tool-versions.
+#
+# update.sh — Upgrade tools declared in this repo.
+#
+# Usage:     make update
+# Mutates:   Homebrew (Brewfile only), fnm/rbenv/pyenv globals, rustup, SDKMAN, extensions.
+# Does NOT:  Change pins in lang/.tool-versions (runtime upgrades are explicit edits + reinstall).
+# Exit:      0 UPDATE_STATUS: ok; 1 if any step failed (continues through remaining steps).
+#
+# Homebrew:  brew update → brew bundle install --upgrade (Brewfile) → brew cleanup.
+#            Does not run brew upgrade on untracked formulae (see make audit).
+# Java:      SDKMAN — sync pin from lang/.tool-versions + sdk selfupdate (no sdk upgrade — prompts in non-TTY).
+#
 set -uo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BREWFILE="$DOTFILES_DIR/homebrew/Brewfile"
 TOOL_VERSIONS="$DOTFILES_DIR/lang/.tool-versions"
 
+# shellcheck source=lib/common.sh
+source "$DOTFILES_DIR/scripts/lib/common.sh"
+
 STEP_FAILURES=0
 declare -a FAILED_STEPS=()
+
+# --- Output helpers ---
 
 section() {
   echo ""
@@ -38,19 +54,6 @@ run_step() {
   fi
 }
 
-tool_version() {
-  local tool="$1"
-  if [ ! -f "$TOOL_VERSIONS" ]; then
-    return 1
-  fi
-  grep -E "^${tool}[[:space:]]+" "$TOOL_VERSIONS" 2>/dev/null | awk '{print $2}' | head -1
-}
-
-version_is_pinned() {
-  local version="$1"
-  [[ -n "$version" && "$version" != "unknown" && "$version" != "not-managed-by-rbenv" ]]
-}
-
 run_globals_script() {
   local script="$1"
   if [ ! -f "$script" ]; then
@@ -60,8 +63,10 @@ run_globals_script() {
   bash "$script"
 }
 
+# --- Update steps (each called via run_step; failures are collected) ---
+
 update_homebrew() {
-  if ! command -v brew &>/dev/null; then
+  if ! ensure_brew_path; then
     echo "    (skipped — brew not installed)"
     return 0
   fi
@@ -85,16 +90,13 @@ update_node() {
   fi
   eval "$(fnm env)"
   local version
-  version=$(tool_version node || true)
+  version=$(tool_version node "$TOOL_VERSIONS" || true)
   if version_is_pinned "$version"; then
     fnm install "$version"
     fnm use "$version"
     ok "Node $(node --version 2>/dev/null || echo "$version")"
   else
     echo "    (no node pin in lang/.tool-versions — using current fnm default)"
-  fi
-  if command -v corepack &>/dev/null; then
-    corepack enable pnpm 2>/dev/null || true
   fi
   run_globals_script "$DOTFILES_DIR/lang/node-globals.sh"
 }
@@ -106,7 +108,7 @@ update_ruby() {
   fi
   eval "$(rbenv init - bash)"
   local version
-  version=$(tool_version ruby || true)
+  version=$(tool_version ruby "$TOOL_VERSIONS" || true)
   if ! version_is_pinned "$version"; then
     echo "    (skipped — Ruby not managed in lang/.tool-versions)"
     return 0
@@ -126,7 +128,7 @@ update_python() {
   [[ -d "$PYENV_ROOT/bin" ]] && export PATH="$PYENV_ROOT/bin:$PATH"
   eval "$(pyenv init -)"
   local version
-  version=$(tool_version python || true)
+  version=$(tool_version python "$TOOL_VERSIONS" || true)
   if ! version_is_pinned "$version"; then
     echo "    (skipped — Python not pinned in lang/.tool-versions)"
     return 0
@@ -151,17 +153,27 @@ update_sdkman() {
     echo "    (skipped — SDKMAN not installed)"
     return 0
   fi
-  # shellcheck source=/dev/null
-  source "$HOME/.sdkman/bin/sdkman-init.sh"
-  sdk selfupdate || true
-  if sdk version &>/dev/null; then
-    sdk upgrade || true
+  set +u
+  source_sdkman || { set -u; return 1; }
+  local version sdk_id
+  version=$(tool_version java "$TOOL_VERSIONS" || true)
+  if version_is_pinned "$version"; then
+    sdk_id=$(java_sdkman_id "$version")
+    sdk install java "$sdk_id"
+    sdk default java "$sdk_id"
+    ok "Java ($sdk_id)"
+  else
+    echo "    (no java pin in lang/.tool-versions — skipping pin sync)"
   fi
+  sdk selfupdate || true
+  # Do not run `sdk upgrade java` here — it prompts to adopt SDKMAN channel defaults (e.g. 25.x) and
+  # hangs or mis-reads stdin in background/non-interactive shells. Bump Java by editing the pin, then re-run make update.
   if grep -qE '^\s*sdk install' "$DOTFILES_DIR/lang/java-globals.sh" 2>/dev/null; then
     run_globals_script "$DOTFILES_DIR/lang/java-globals.sh"
   else
     echo "    (no sdk install commands in lang/java-globals.sh)"
   fi
+  set -u
 }
 
 update_editor_extensions() {
@@ -194,6 +206,7 @@ print_summary() {
     echo "    To change a runtime: edit lang/.tool-versions, reinstall, then commit."
     echo ""
     echo "    After installing new tools: make audit"
+    echo "    Java PATH is set in zsh — run: exec zsh   (or open a new tab) if java -version still fails"
     echo ""
     echo "UPDATE_STATUS: ok"
     return 0

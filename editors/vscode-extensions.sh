@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
-# Curated VS Code extensions
-# Run: bash editors/vscode-extensions.sh
-# Or:  make editors
 #
-# VS Code-specific extensions (not in Cursor) are marked with [VS Code only].
+# vscode-extensions.sh — Curated VS Code extension IDs (source of truth for make audit).
+#
+# Usage:     make editors  (via scripts/vscode-setup.sh)
+# Mutates:   Installs extensions with: code --install-extension <id>
+# Audit:     make audit compares code --list-extensions vs lines in this file.
+#
+# Notes:
+#   - [VS Code only] = not installed on Cursor by design.
+#   - Add one line per extension; inline comments document why it is listed.
+#
 
 set -euo pipefail
 

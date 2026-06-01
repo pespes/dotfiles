@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-# Global pip packages — installed/updated by make install and make update
+#
+# python-globals.sh — Global pip packages (pyenv-managed Python).
+#
+# Invoked by:  scripts/install.sh, scripts/update.sh (after pyenv global)
+# Not stowed:  Repo only — see lang/.stow-local-ignore.
+#
+set -euo pipefail
 
 pip install --upgrade \
   pip \

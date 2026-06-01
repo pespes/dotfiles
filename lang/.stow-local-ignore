@@ -1,0 +1,8 @@
+# GNU stow ignore rules for the lang/ package (used by make link).
+# Only lang/.tool-versions is symlinked to ~/.tool-versions.
+# Install scripts stay in the repo and are run via scripts/install.sh paths.
+node-globals\.sh
+ruby-globals\.sh
+python-globals\.sh
+rust-globals\.sh
+java-globals\.sh
