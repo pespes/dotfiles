@@ -43,13 +43,24 @@ export DOTFILES_DIR
 
 brew() {
   command brew "$@"
-  if [[ "$1" == "install" && -n "$2" ]]; then
-    local pkg="$2"
-    local brewfile="$DOTFILES_DIR/homebrew/Brewfile"
-    if ! grep -q "\"$pkg\"" "$brewfile" 2>/dev/null; then
-      echo "brew \"$pkg\"  # added $(date +%Y-%m-%d) — add a comment explaining why" >> "$brewfile"
-      echo "dotfiles → Added '$pkg' to Brewfile. Edit the comment, then git commit."
-    fi
+  [[ "$1" == "install" ]] || return
+  local brewfile="$DOTFILES_DIR/homebrew/Brewfile"
+  local type="brew" pkg=""
+  shift
+  # Detect --cask and skip flags; first bare arg is the package name.
+  # Exotic installs (multiple packages, taps) are caught by make audit.
+  while (( $# )); do
+    case "$1" in
+      --cask|--casks) type="cask" ;;
+      -*) ;;
+      *) pkg="$1"; break ;;
+    esac
+    shift
+  done
+  [[ -n "$pkg" ]] || return
+  if ! grep -q "^$type \"$pkg\"" "$brewfile" 2>/dev/null; then
+    echo "$type \"$pkg\"  # added $(date +%Y-%m-%d) — add a comment explaining why" >> "$brewfile"
+    echo "dotfiles → Added '$type \"$pkg\"' to Brewfile. Edit the comment + recategorize, then git commit."
   fi
 }
 

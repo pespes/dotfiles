@@ -12,6 +12,9 @@
 #
 # Status:    DOCTOR_STATUS: ok | ok_with_warnings | failed
 #
+# Status labels print ~/.foo for readability; they are display strings, not paths
+# (all real paths use $HOME). Silence the tilde-in-quotes lint file-wide.
+# shellcheck disable=SC2088
 set -uo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

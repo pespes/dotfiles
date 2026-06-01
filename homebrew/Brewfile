@@ -50,6 +50,7 @@ brew "yt-dlp"         # Video downloader (YouTube, etc.)
 # Development Tools
 # -----------------------------------------------------------------------------
 brew "cmake"          # Cross-platform build system
+brew "shellcheck"     # Static analysis / linter for shell scripts
 brew "watchman"       # File watching service (used by React Native, etc.)
 brew "ios-deploy"     # Deploy to iOS devices from CLI
 brew "zeromq"         # Messaging library (used by Jupyter kernel communication)
