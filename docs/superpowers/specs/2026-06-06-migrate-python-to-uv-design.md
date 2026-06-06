@@ -126,7 +126,7 @@ Three changes:
      local pinned
      pinned=$(tool_version python "$TOOL_VERSIONS" 2>/dev/null || true)
      version_is_pinned "$pinned" || return 0
-     if uv python list 2>/dev/null | grep -q "$pinned"; then
+     if uv python list --only-installed 2>/dev/null | grep -q "$pinned"; then
        pass "Python version ($pinned installed via uv)"
      else
        warn "Python version (pinned $pinned not installed — run: uv python install $pinned)"
@@ -143,7 +143,9 @@ Three changes:
 ## Migration Notes
 
 After implementing:
-1. Run `brew bundle install --file=homebrew/Brewfile` to install uv and remove pyenv
-2. Run `make install` (Python section) or manually: `uv python install 3.13.12 && bash lang/python-globals.sh`
-3. Run `make doctor` to verify all checks pass
-4. Open a new terminal — pyenv init is gone from `.zshrc`
+
+1. Run `brew bundle install --file=homebrew/Brewfile` to install uv
+2. Run `brew uninstall pyenv pyenv-virtualenv` to remove pyenv (`brew bundle install` only installs — it never removes)
+3. Run `make install` (Python section) or manually: `uv python install 3.13.12 && bash lang/python-globals.sh`
+4. Run `make doctor` to verify all checks pass
+5. Open a new terminal — pyenv init is gone from `.zshrc`
