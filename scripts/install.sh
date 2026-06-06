@@ -166,26 +166,22 @@ install_ruby() {
 }
 
 install_python() {
-  if ! confirm "Set up Python via pyenv?"; then
-    skip "Python/pyenv (declined)"
+  if ! confirm "Set up Python via uv?"; then
+    skip "Python/uv (declined)"
     return 0
   fi
-  if ! command -v pyenv &>/dev/null; then
-    echo "    pyenv not found — ensure Homebrew step succeeded."
+  if ! command -v uv &>/dev/null; then
+    echo "    uv not found — ensure Homebrew step succeeded."
     return 1
   fi
-  export PYENV_ROOT="${PYENV_ROOT:-$HOME/.pyenv}"
-  [[ -d "$PYENV_ROOT/bin" ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init -)"
   local version
   version=$(tool_version python "$TOOL_VERSIONS" || true)
   if ! version_is_pinned "$version"; then
     skip "Python (no version in lang/.tool-versions)"
     return 0
   fi
-  pyenv install -s "$version"
-  pyenv global "$version"
-  ok "Python $(python --version 2>/dev/null | awk '{print $2}')"
+  uv python install "$version"
+  ok "Python $version"
   run_globals_script "$DOTFILES_DIR/lang/python-globals.sh"
 }
 
