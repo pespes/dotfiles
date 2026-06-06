@@ -4,7 +4,7 @@
 #
 # Usage:     make install-tools   (this script only)
 #            make install         (bootstrap → this → link.sh → vscode-setup.sh)
-# Mutates:   Homebrew, fnm/rbenv/pyenv/rustup/SDKMAN, global language packages.
+# Mutates:   Homebrew, fnm/rbenv/uv/rustup/SDKMAN, global language packages.
 # Does NOT:  Symlink dotfiles (make link) or install editor extensions (make editors).
 # Exit:      0 INSTALL_STATUS: ok; 1 if a required step failed.
 #
