@@ -3,7 +3,7 @@
 # update.sh — Upgrade tools declared in this repo.
 #
 # Usage:     make update
-# Mutates:   Homebrew (Brewfile only), fnm/rbenv/pyenv globals, rustup, SDKMAN, extensions.
+# Mutates:   Homebrew (Brewfile only), fnm/rbenv/uv globals, rustup, SDKMAN, extensions.
 # Does NOT:  Change language-runtime pins in lang/.tool-versions (node/ruby/python/rust/java are explicit edits + reinstall).
 # pnpm:      Exception — tracks latest stable (pnpm@latest) and the installed version is auto-recorded in lang/.tool-versions.
 # Exit:      0 UPDATE_STATUS: ok; 1 if any step failed (continues through remaining steps).
