@@ -23,11 +23,6 @@ eval "$(fnm env --use-on-cd)"
 # rustup
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
-# pyenv (Python)
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init - zsh)"
-
 # rbenv (Ruby)
 eval "$(rbenv init - zsh)"
 
@@ -90,13 +85,13 @@ npm() {
   fi
 }
 
-pip() {
-  command pip "$@"
-  if [[ "$1" == "install" && -n "$2" && "$2" != "--upgrade" && "$2" != -* ]]; then
-    local pkg="$2"
+uv() {
+  command uv "$@"
+  if [[ "$1" == "tool" && "$2" == "install" && -n "$3" ]]; then
+    local pkg="$3"
     local globals="$DOTFILES_DIR/lang/python-globals.sh"
     if ! _dotfiles_tracked "$pkg" "$globals"; then
-      _dotfiles_track_continuation "$globals" '^pip install --upgrade' "$pkg"
+      echo "uv tool install $pkg" >> "$globals"
       echo "dotfiles → Added '$pkg' to python-globals.sh. Commit when ready."
     fi
   fi
