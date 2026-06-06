@@ -48,7 +48,7 @@ Pins live in `lang/.tool-versions`. `make install` / `make update` sync each man
 |----------|---------|-------------|
 | Node | fnm | `v24.14.0` |
 | Ruby | rbenv | `3.3.10` |
-| Python | pyenv | `3.13.12` |
+| Python | uv | `3.13.12` |
 | Rust | rustup | `stable-aarch64-apple-darwin` |
 | Java | SDKMAN (Temurin) | `21.0.11-tem` — use `sdk list java` when bumping |
 

@@ -14,7 +14,7 @@ make link         →  scripts/link.sh            Symlinks only (safe anytime)
 
 | Make target | Script | Purpose |
 |-------------|--------|---------|
-| `make update` | `update.sh` | Upgrade Brewfile packages, sync language pins/globals (fnm, rbenv, pyenv, SDKMAN, rustup), editor extensions |
+| `make update` | `update.sh` | Upgrade Brewfile packages, sync language pins/globals (fnm, rbenv, uv, SDKMAN, rustup), editor extensions |
 | `make audit` | `audit.sh` | Compare machine vs repo (drift report, read-only) |
 | `make doctor` | `doctor.sh` | Health check: tools, symlinks, Brewfile installs, version pins (including Java via SDKMAN) |
 | `make backup` | `backup.sh` | Dump all Homebrew packages to `homebrew/Brewfile.backup` |
