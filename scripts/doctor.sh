@@ -143,14 +143,13 @@ check_ruby_pin() {
 }
 
 check_python_pin() {
-  local pinned current
+  local pinned
   pinned=$(tool_version python "$TOOL_VERSIONS" 2>/dev/null || true)
   version_is_pinned "$pinned" || return 0
-  current=$(python --version 2>/dev/null | awk '{print $2}' || true)
-  if pin_matches "$pinned" "$current"; then
-    pass "Python version ($current)"
+  if uv python list --only-installed 2>/dev/null | grep -q "$pinned"; then
+    pass "Python version ($pinned installed via uv)"
   else
-    warn "Python version (pinned $pinned, active $current)"
+    warn "Python version (pinned $pinned not installed — run: uv python install $pinned)"
   fi
 }
 
@@ -247,7 +246,7 @@ fi
 section "Language managers"
 command -v fnm &>/dev/null && pass "fnm installed" || fail "fnm installed"
 command -v rbenv &>/dev/null && pass "rbenv installed" || fail "rbenv installed"
-command -v pyenv &>/dev/null && pass "pyenv installed" || fail "pyenv installed"
+command -v uv &>/dev/null && pass "uv installed" || fail "uv installed"
 command -v rustup &>/dev/null && pass "rustup installed" || fail "rustup installed"
 [ -d "$HOME/.sdkman" ] && pass "SDKMAN installed" || warn "SDKMAN not installed (optional)"
 
@@ -261,10 +260,7 @@ if [ -f "$TOOL_VERSIONS" ]; then
     eval "$(rbenv init - bash 2>/dev/null)" || true
     check_ruby_pin
   fi
-  if command -v pyenv &>/dev/null; then
-    export PYENV_ROOT="${PYENV_ROOT:-$HOME/.pyenv}"
-    [[ -d "$PYENV_ROOT/bin" ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init - 2>/dev/null)" || true
+  if command -v uv &>/dev/null; then
     check_python_pin
   fi
   check_java_pin
