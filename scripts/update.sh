@@ -155,23 +155,20 @@ update_ruby() {
 }
 
 update_python() {
-  if ! command -v pyenv &>/dev/null; then
-    echo "    (skipped — pyenv not installed)"
+  if ! command -v uv &>/dev/null; then
+    echo "    (skipped — uv not installed)"
     return 0
   fi
-  export PYENV_ROOT="${PYENV_ROOT:-$HOME/.pyenv}"
-  [[ -d "$PYENV_ROOT/bin" ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init -)"
   local version
   version=$(tool_version python "$TOOL_VERSIONS" || true)
   if ! version_is_pinned "$version"; then
     echo "    (skipped — Python not pinned in lang/.tool-versions)"
     return 0
   fi
-  pyenv install -s "$version"
-  pyenv global "$version"
-  ok "Python $(python --version 2>/dev/null | awk '{print $2}')"
-  run_globals_script "$DOTFILES_DIR/lang/python-globals.sh"
+  uv python install "$version"
+  ok "Python $version"
+  uv tool upgrade --all
+  ok "uv tools upgraded"
 }
 
 update_rust() {
@@ -285,7 +282,7 @@ run_step "Node" update_node
 section "Ruby (rbenv + global gems)"
 run_step "Ruby" update_ruby
 
-section "Python (pyenv + global pip)"
+section "Python (uv + global tools)"
 run_step "Python" update_python
 
 section "Rust (rustup + components)"
