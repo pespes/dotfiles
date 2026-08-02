@@ -147,3 +147,20 @@ if [[ -x "$SDKMAN_DIR/candidates/java/current/bin/java" ]]; then
     *) export PATH="$JAVA_HOME/bin:$PATH" ;;
   esac
 fi
+
+# Added by Antigravity IDE
+export PATH="/Users/peteresveld/.antigravity-ide/antigravity-ide/bin:$PATH"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/peteresveld/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/peteresveld/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/peteresveld/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/peteresveld/google-cloud-sdk/completion.zsh.inc'; fi
+
+# pnpm
+export PNPM_HOME="/Users/peteresveld/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end

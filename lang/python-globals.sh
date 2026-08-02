@@ -10,3 +10,5 @@ set -euo pipefail
 uv tool install black
 uv tool install ruff
 uv tool install httpie
+uv tool install crewai
+uv tool install crewai-cli

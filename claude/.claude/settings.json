@@ -306,9 +306,12 @@
       "/Users/peteresveld/Documents/GitHub/dotfiles/ssh/.ssh"
     ]
   },
+  "model": "claude-sonnet-5",
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "vercel@claude-plugins-official": true
-  }
+  },
+  "effortLevel": "high",
+  "tui": "fullscreen"
 }
