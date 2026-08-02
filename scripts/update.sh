@@ -110,7 +110,11 @@ update_homebrew() {
     warn "brew update failed (likely network/DNS) — upgraded against existing taps; re-run when online"
   fi
   # Upgrade only packages listed in the Brewfile (not every formula on the system).
-  brew bundle install --file="$BREWFILE" --upgrade
+  # HOMEBREW_BUNDLE_JOBS defaults to `auto` (up to 4 parallel formula installs),
+  # which lets independent upgrades race for shared Cellar/tmp locks (seen:
+  # gnupg's upgrade failing because cmake's concurrent upgrade held a lock).
+  # Force sequential installs — slower, but removes the race.
+  HOMEBREW_BUNDLE_JOBS=1 brew bundle install --file="$BREWFILE" --upgrade
   brew cleanup
   if brew outdated --formula 2>/dev/null | grep -q .; then
     echo "    (other outdated formulae on this Mac are not upgraded — see: make audit)"
