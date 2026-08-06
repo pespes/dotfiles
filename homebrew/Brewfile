@@ -57,10 +57,10 @@ brew "zeromq"         # Messaging library (used by Jupyter kernel communication)
 # -----------------------------------------------------------------------------
 # Automation & Services
 # -----------------------------------------------------------------------------
-brew "jackett"        # API support for torrent trackers
 brew "terminal-notifier"  # macOS notifications from scripts (used by launchd audit job)
 
 # -----------------------------------------------------------------------------
 # Fonts
 # -----------------------------------------------------------------------------
 cask "font-hack-nerd-font"  # Developer font with icons/glyphs
+brew "prowlarr"  # added 2026-08-02 — add a comment explaining why

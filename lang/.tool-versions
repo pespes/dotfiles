@@ -2,7 +2,7 @@
 # node→fnm  ruby→rbenv  python→pyenv  rust→rustup  java→SDKMAN (sdk list java; see java_sdkman_id in scripts/lib/common.sh)
 # pnpm→npm-global (tracked-latest stable via pnpm@latest in lang/node-globals.sh; version below auto-recorded by make update)
 node    v24.18.1
-pnpm    11.18.0  # tracked-latest stable; auto-recorded by make update
+pnpm    11.20.0  # tracked-latest stable; auto-recorded by make update
 ruby    3.3.10
 python  3.13.12
 rust    stable-aarch64-apple-darwin
