@@ -114,10 +114,16 @@ update_homebrew() {
   # which lets independent upgrades race for shared Cellar/tmp locks (seen:
   # gnupg's upgrade failing because cmake's concurrent upgrade held a lock).
   # Force sequential installs — slower, but removes the race.
-  HOMEBREW_BUNDLE_JOBS=1 brew bundle install --file="$BREWFILE" --upgrade
+  # Capture bundle's status so the cleanup below doesn't mask a failed install.
+  local bundle_rc=0
+  HOMEBREW_BUNDLE_JOBS=1 brew bundle install --file="$BREWFILE" --upgrade || bundle_rc=$?
   brew cleanup
   if brew outdated --formula 2>/dev/null | grep -q .; then
     echo "    (other outdated formulae on this Mac are not upgraded — see: make audit)"
+  fi
+  if [ "$bundle_rc" -ne 0 ]; then
+    echo "    ✗ brew bundle failed (exit $bundle_rc) — see errors above"
+    return 1
   fi
 }
 

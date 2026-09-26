@@ -295,7 +295,7 @@
       "Bash(sed -n '1,80p' \"LLM context/qm-design-system-main/libs/ui-tokens/tokens/primitives/type.tokens.json\")",
       "Bash(node -e 'const j=require\\('\\\\''/Users/peteresveld/Downloads/qm-design-system-main/libs/ui-tokens/tokens/semantic/color.tokens.json'\\\\''\\); const c=j.color||j; console.log\\(Object.keys\\(c\\).filter\\(k=>!k.startsWith\\('\\\\''$'\\\\''\\)\\)\\);')"
     ],
-    "defaultMode": "default",
+    "defaultMode": "auto",
     "additionalDirectories": [
       "/Users/peteresveld/Documents/GitHub/Shadcn-tokens-playground-01/docs/superpowers",
       "/Users/peteresveld/Documents/GitHub/qm-ho-landing-proto-01/src/assets/plans",
@@ -306,12 +306,65 @@
       "/Users/peteresveld/Documents/GitHub/dotfiles/ssh/.ssh"
     ]
   },
-  "model": "claude-sonnet-5",
   "enabledPlugins": {
-    "superpowers@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": false,
     "claude-md-management@claude-plugins-official": true,
-    "vercel@claude-plugins-official": true
+    "vercel@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "browser-use@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true
   },
   "effortLevel": "high",
-  "tui": "fullscreen"
+  "tui": "fullscreen",
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/peteresveld/.claude/notify-plus.js\" # claude-code-notifier-plus",
+            "async": true,
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Elicitation": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/peteresveld/.claude/notify-plus.js\" # claude-code-notifier-plus",
+            "async": true,
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/peteresveld/.claude/notify-plus.js\" # claude-code-notifier-plus",
+            "async": true,
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/peteresveld/.claude/notify-plus.js\" # claude-code-notifier-plus",
+            "async": true,
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
 }
