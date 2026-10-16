@@ -58,7 +58,11 @@ brew "zeromq"         # Messaging library (used by Jupyter kernel communication)
 # Automation & Services
 # -----------------------------------------------------------------------------
 brew "terminal-notifier"  # macOS notifications from scripts (used by launchd audit job)
-# cask "prowlarr"         # Disabled by Homebrew 2026-09-01 (fails Gatekeeper); Prowlarr.app installed manually from prowlarr.com
+# cask "prowlarr"         # Disabled by Homebrew 2026-09-01 (fails Gatekeeper); installed manually, see below
+#   Prowlarr.app: osx-app-core-arm64.zip from github.com/Prowlarr/Prowlarr/releases.
+#   Builds ship unsigned, so macOS refuses to launch them ("Launchd job spawn failed")
+#   and the in-app updater's swap fails. After every install/update, ad-hoc sign it:
+#     codesign --force --deep -s - /Applications/Prowlarr.app && open -a Prowlarr
 
 # -----------------------------------------------------------------------------
 # Fonts
