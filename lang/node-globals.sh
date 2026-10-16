@@ -11,6 +11,8 @@
 #
 set -euo pipefail
 
-npm install -g \
-  pnpm@latest \
-  @anthropic-ai/claude-code
+# --allow-scripts: approve pnpm's install scripts (npm 11+ warns on unreviewed ones).
+# Claude Code is NOT installed here — it uses the native installer (~/.local/bin/claude),
+# which self-updates.
+npm install -g --allow-scripts=pnpm \
+  pnpm@latest

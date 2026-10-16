@@ -88,7 +88,9 @@ record_pnpm_version() {
   else
     cp "$TOOL_VERSIONS" "$tmp" && printf '%s\n' "$line" >> "$tmp"
   fi
-  mv "$tmp" "$TOOL_VERSIONS"
+  # Write in place (not mv): mktemp creates 0600, which would clobber the file's mode.
+  cat "$tmp" > "$TOOL_VERSIONS"
+  rm -f "$tmp"
   ok "pnpm $version (recorded in lang/.tool-versions)"
 }
 
@@ -136,13 +138,13 @@ update_node() {
   local version
   version=$(tool_version node "$TOOL_VERSIONS" || true)
   if version_is_pinned "$version"; then
-    fnm install "$version"
-    fnm use "$version"
+    fnm install "$version" || return 1
+    fnm use "$version" || return 1
     ok "Node $(node --version 2>/dev/null || echo "$version")"
   else
     echo "    (no node pin in lang/.tool-versions — using current fnm default)"
   fi
-  run_globals_script "$DOTFILES_DIR/lang/node-globals.sh"
+  run_globals_script "$DOTFILES_DIR/lang/node-globals.sh" || return 1
   record_pnpm_version
 }
 
@@ -158,8 +160,8 @@ update_ruby() {
     echo "    (skipped — Ruby not managed in lang/.tool-versions)"
     return 0
   fi
-  rbenv install -s "$version"
-  rbenv global "$version"
+  rbenv install -s "$version" || return 1
+  rbenv global "$version" || return 1
   ok "Ruby $(ruby --version 2>/dev/null | awk '{print $2}')"
   run_globals_script "$DOTFILES_DIR/lang/ruby-globals.sh"
 }
@@ -175,9 +177,11 @@ update_python() {
     echo "    (skipped — Python not pinned in lang/.tool-versions)"
     return 0
   fi
-  uv python install "$version"
+  uv python install "$version" || return 1
   ok "Python $version"
-  uv tool upgrade --all
+  # Install any tools newly added to python-globals.sh, then upgrade everything.
+  run_globals_script "$DOTFILES_DIR/lang/python-globals.sh" || return 1
+  uv tool upgrade --all || return 1
   ok "uv tools upgraded"
 }
 
@@ -186,7 +190,7 @@ update_rust() {
     echo "    (skipped — rustup not installed)"
     return 0
   fi
-  rustup update stable
+  rustup update stable || return 1
   run_globals_script "$DOTFILES_DIR/lang/rust-globals.sh"
 }
 
@@ -201,8 +205,10 @@ update_sdkman() {
   version=$(tool_version java "$TOOL_VERSIONS" || true)
   if version_is_pinned "$version"; then
     sdk_id=$(java_sdkman_id "$version")
-    sdk install java "$sdk_id"
-    sdk default java "$sdk_id"
+    if ! sdk install java "$sdk_id" </dev/null || ! sdk default java "$sdk_id"; then
+      set -u
+      return 1
+    fi
     ok "Java ($sdk_id)"
   else
     echo "    (no java pin in lang/.tool-versions — skipping pin sync)"
@@ -219,22 +225,16 @@ update_sdkman() {
 }
 
 update_editor_extensions() {
-  local updated=0
   if command -v code &>/dev/null; then
-    code --update-extensions
-    updated=1
+    code --update-extensions || return 1
   else
     echo "    (skipped — VS Code CLI not found)"
   fi
   local cursor=/Applications/Cursor.app/Contents/Resources/app/bin/cursor
   if [ -x "$cursor" ]; then
-    "$cursor" --update-extensions
-    updated=1
+    "$cursor" --update-extensions || return 1
   else
     echo "    (skipped — Cursor not found)"
-  fi
-  if [ "$updated" -eq 0 ]; then
-    return 0
   fi
 }
 

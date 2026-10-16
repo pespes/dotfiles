@@ -18,7 +18,8 @@ code --install-extension anthropic.claude-code                          # Claude
 # -----------------------------------------------------------------------------
 # AI
 # -----------------------------------------------------------------------------
-code --install-extension google.geminicodeassist                        # Gemini AI code assist
+code --install-extension continue.continue                              # Continue AI code assistant
+code --install-extension tutuge.claude-code-notifier-plus               # Claude Code task notifications [VS Code only]
 
 # -----------------------------------------------------------------------------
 # Git & Version Control
@@ -42,6 +43,8 @@ code --install-extension formulahendry.auto-close-tag                   # Auto-c
 code --install-extension formulahendry.auto-rename-tag                  # Auto-rename paired HTML tags
 code --install-extension astro-build.astro-vscode                       # Astro framework support
 code --install-extension svelte.svelte-vscode                           # Svelte framework support
+code --install-extension nrwl.angular-console                           # Nx Console (monorepo tooling)
+code --install-extension tauri-apps.tauri-vscode                        # Tauri app support
 
 # -----------------------------------------------------------------------------
 # Formatting & Linting

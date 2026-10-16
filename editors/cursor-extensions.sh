@@ -18,7 +18,6 @@ CURSOR=/Applications/Cursor.app/Contents/Resources/app/bin/cursor
 # -----------------------------------------------------------------------------
 # AI
 # -----------------------------------------------------------------------------
-"$CURSOR" --install-extension google.geminicodeassist                    # Gemini AI code assist
 "$CURSOR" --install-extension visualstudioexptteam.vscodeintellicode       # AI-assisted completions
 
 # -----------------------------------------------------------------------------
@@ -80,6 +79,7 @@ CURSOR=/Applications/Cursor.app/Contents/Resources/app/bin/cursor
 # Remote Development & Containers
 # -----------------------------------------------------------------------------
 "$CURSOR" --install-extension anysphere.remote-ssh                       # SSH remote development (Cursor fork)
+"$CURSOR" --install-extension anysphere.remote-containers                 # Dev Containers support (Cursor fork)
 "$CURSOR" --install-extension ms-vscode-remote.remote-containers         # Dev Containers support
 "$CURSOR" --install-extension ms-azuretools.vscode-docker                # Docker support
 "$CURSOR" --install-extension ms-azuretools.vscode-containers            # Container tools

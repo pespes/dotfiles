@@ -37,7 +37,7 @@ DOTFILES_DIR="${${(%):-%x}:A:h:h}"
 export DOTFILES_DIR
 
 brew() {
-  command brew "$@"
+  command brew "$@" || return
   [[ "$1" == "install" ]] || return
   local brewfile="$DOTFILES_DIR/homebrew/Brewfile"
   local type="brew" pkg=""
@@ -73,10 +73,19 @@ _dotfiles_track_continuation() {
 # Already listed? Fixed-string match avoids treating package names as regexes.
 _dotfiles_tracked() { grep -qF -- "$1" "$2" 2>/dev/null; }
 
+# First non-flag argument (e.g. skips --allow-scripts=pnpm, --force).
+_dotfiles_first_pkg() {
+  local arg
+  for arg in "$@"; do
+    [[ "$arg" == -* ]] || { print -r -- "$arg"; return; }
+  done
+}
+
 npm() {
-  command npm "$@"
-  if [[ "$1" == "install" && "$2" == "-g" && -n "$3" ]]; then
-    local pkg="$3"
+  command npm "$@" || return
+  if [[ "$1" == "install" && "$2" == "-g" ]]; then
+    local pkg="$(_dotfiles_first_pkg "${@:3}")"
+    [[ -n "$pkg" ]] || return 0
     local globals="$DOTFILES_DIR/lang/node-globals.sh"
     if ! _dotfiles_tracked "$pkg" "$globals"; then
       _dotfiles_track_continuation "$globals" '^npm install -g' "$pkg"
@@ -86,9 +95,10 @@ npm() {
 }
 
 uv() {
-  command uv "$@"
-  if [[ "$1" == "tool" && "$2" == "install" && -n "$3" ]]; then
-    local pkg="$3"
+  command uv "$@" || return
+  if [[ "$1" == "tool" && "$2" == "install" ]]; then
+    local pkg="$(_dotfiles_first_pkg "${@:3}")"
+    [[ -n "$pkg" ]] || return 0
     local globals="$DOTFILES_DIR/lang/python-globals.sh"
     if ! _dotfiles_tracked "$pkg" "$globals"; then
       echo "uv tool install $pkg" >> "$globals"
@@ -98,9 +108,10 @@ uv() {
 }
 
 gem() {
-  command gem "$@"
-  if [[ "$1" == "install" && -n "$2" ]]; then
-    local pkg="$2"
+  command gem "$@" || return
+  if [[ "$1" == "install" ]]; then
+    local pkg="$(_dotfiles_first_pkg "${@:2}")"
+    [[ -n "$pkg" ]] || return 0
     local globals="$DOTFILES_DIR/lang/ruby-globals.sh"
     if ! _dotfiles_tracked "$pkg" "$globals"; then
       _dotfiles_track_continuation "$globals" '^gem install' "$pkg"
@@ -110,9 +121,10 @@ gem() {
 }
 
 cargo() {
-  command cargo "$@"
-  if [[ "$1" == "install" && -n "$2" ]]; then
-    local pkg="$2"
+  command cargo "$@" || return
+  if [[ "$1" == "install" ]]; then
+    local pkg="$(_dotfiles_first_pkg "${@:2}")"
+    [[ -n "$pkg" ]] || return 0
     local globals="$DOTFILES_DIR/lang/rust-globals.sh"
     if ! grep -q "$pkg" "$globals" 2>/dev/null; then
       echo "cargo install $pkg" >> "$globals"

@@ -58,7 +58,7 @@ brew "zeromq"         # Messaging library (used by Jupyter kernel communication)
 # Automation & Services
 # -----------------------------------------------------------------------------
 brew "terminal-notifier"  # macOS notifications from scripts (used by launchd audit job)
-cask "prowlarr"           # Indexer manager/proxy for *arr apps (added 2026-08-02)
+# cask "prowlarr"         # Disabled by Homebrew 2026-09-01 (fails Gatekeeper); Prowlarr.app installed manually from prowlarr.com
 
 # -----------------------------------------------------------------------------
 # Fonts
