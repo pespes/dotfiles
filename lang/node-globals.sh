@@ -15,4 +15,5 @@ set -euo pipefail
 # Claude Code is NOT installed here — it uses the native installer (~/.local/bin/claude),
 # which self-updates.
 npm install -g --allow-scripts=pnpm \
+  figma-console-mcp \
   pnpm@latest

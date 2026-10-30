@@ -168,11 +168,3 @@ if [ -f '/Users/peteresveld/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/pet
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/peteresveld/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/peteresveld/google-cloud-sdk/completion.zsh.inc'; fi
-
-# pnpm
-export PNPM_HOME="/Users/peteresveld/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME/bin:"*) ;;
-  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
-esac
-# pnpm end
