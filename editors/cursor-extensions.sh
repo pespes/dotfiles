@@ -32,6 +32,7 @@ CURSOR=/Applications/Cursor.app/Contents/Resources/app/bin/cursor
 "$CURSOR" --install-extension dsznajder.es7-react-js-snippets            # ES7+ React/Redux snippets
 "$CURSOR" --install-extension msjsdiag.vscode-react-native               # React Native tools
 "$CURSOR" --install-extension leizongmin.node-module-intellisense        # Node module name autocomplete
+"$CURSOR" --install-extension nrwl.angular-console                       # Nx Console: Nx MCP server for Cursor's agent
 
 # -----------------------------------------------------------------------------
 # Web / CSS / HTML
@@ -42,7 +43,6 @@ CURSOR=/Applications/Cursor.app/Contents/Resources/app/bin/cursor
 "$CURSOR" --install-extension formulahendry.auto-rename-tag              # Auto-rename paired HTML tags
 "$CURSOR" --install-extension astro-build.astro-vscode                   # Astro framework support
 "$CURSOR" --install-extension svelte.svelte-vscode                       # Svelte framework support
-"$CURSOR" --install-extension nrwl.angular-console                       # Nx Console (monorepo tooling)
 
 # -----------------------------------------------------------------------------
 # Formatting & Linting
