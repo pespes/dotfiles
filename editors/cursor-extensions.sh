@@ -42,6 +42,7 @@ CURSOR=/Applications/Cursor.app/Contents/Resources/app/bin/cursor
 "$CURSOR" --install-extension formulahendry.auto-rename-tag              # Auto-rename paired HTML tags
 "$CURSOR" --install-extension astro-build.astro-vscode                   # Astro framework support
 "$CURSOR" --install-extension svelte.svelte-vscode                       # Svelte framework support
+"$CURSOR" --install-extension nrwl.angular-console                       # Nx Console (monorepo tooling)
 
 # -----------------------------------------------------------------------------
 # Formatting & Linting
